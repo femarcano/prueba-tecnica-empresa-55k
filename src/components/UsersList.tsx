@@ -1,9 +1,10 @@
 interface UsersListsProps {
+  deleteUser: (uuid: string) => void
   users: User[] | null;
   showColors: boolean
 }
 
-export function UsersList({ users, showColors }: UsersListsProps) {
+export function UsersList({ deleteUser, users, showColors }: UsersListsProps) {
   return (
     <table>
       <thead>
@@ -34,7 +35,7 @@ export function UsersList({ users, showColors }: UsersListsProps) {
                 <p>{user.location.country}</p>
               </td>
               <td>
-                <button>Edit</button>
+                <button onClick={() => deleteUser(user.login.uuid)}>Delete</button>
               </td>
             </tr>
           );
