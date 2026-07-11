@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import "./App.css";
 import { UsersList } from "./components/UsersList";
 import type { UsersRepository } from "./repositories/usersRepository";
@@ -9,13 +10,20 @@ interface AppProps {
 }
 
 function App({ repository }: AppProps) {
-  const [users, setUsers] = useState<User[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data: users = null, isLoading, error } = useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: () => repository.getUsers(),
+  });
+
   const originalUsersRef = useRef<User[] | null>(null);
+  if (users && originalUsersRef.current === null) {
+    originalUsersRef.current = users;
+  }
 
   const toggleColors = () => {
     setShowColors(!showColors);
@@ -43,24 +51,16 @@ function App({ repository }: AppProps) {
   };
 
   const handleDelete = (uuid: string) => {
-    const filteredUsers = users?.filter((user) => user.login.uuid !== uuid);
-    setUsers(filteredUsers ?? null);
+    queryClient.setQueryData<User[]>(["users"], (old) =>
+      old ? old.filter((user) => user.login.uuid !== uuid) : old
+    );
   };
 
   const handleReset = () => {
-    setUsers(originalUsersRef.current);
+    if (originalUsersRef.current) {
+      queryClient.setQueryData<User[]>(["users"], originalUsersRef.current);
+    }
   };
-
-  useEffect(() => {
-    repository
-      .getUsers()
-      .then((fetchedUsers) => {
-        setUsers(fetchedUsers);
-        originalUsersRef.current = fetchedUsers;
-      })
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
-  }, [repository]);
 
   return (
     <div className="App">
@@ -79,9 +79,9 @@ function App({ repository }: AppProps) {
         ></input>
       </header>
       <main>
-        {loading && <p>Loading users…</p>}
+        {isLoading && <p>Loading users…</p>}
         {error && <p>Error loading users.</p>}
-        {!loading && !error && (
+        {!isLoading && !error && (
           <UsersList
             deleteUser={handleDelete}
             showColors={showColors}
