@@ -1,6 +1,5 @@
 import { User } from "../../logics";
 
-
 interface UsersListsProps {
   deleteUser: (uuid: string) => void;
   users: User[] | null;
@@ -38,9 +37,7 @@ export function UsersList({ deleteUser, users, showColors }: UsersListsProps) {
                 <p>{user.location.country}</p>
               </td>
               <td>
-                <button onClick={() => deleteUser(user.login.uuid)}>
-                  Delete
-                </button>
+                <button onClick={() => deleteUser(user.login.uuid)}>Delete</button>
               </td>
             </tr>
           );

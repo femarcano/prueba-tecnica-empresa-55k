@@ -48,11 +48,7 @@ export const UserListPresentation: React.FC<UserListPresentation> = ({
         {isLoading && <p>Loading users…</p>}
         {error && <p>Error loading users.</p>}
         {!isLoading && !error && (
-          <UsersList
-            deleteUser={onDelete}
-            showColors={showColors}
-            users={sortedUsers}
-          />
+          <UsersList deleteUser={onDelete} showColors={showColors} users={sortedUsers} />
         )}
       </main>
     </div>

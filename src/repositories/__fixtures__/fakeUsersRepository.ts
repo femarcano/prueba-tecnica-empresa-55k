@@ -1,4 +1,5 @@
-import type { User } from "../../features/UserList/logics";
+import type { User } from "@/features/UserList/logics";
+
 import type { UsersRepository } from "../usersRepository";
 
 export class FakeUsersRepository implements UsersRepository {

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
+
+import type { UsersRepository } from "@/repositories/usersRepository";
+
 import { useGetUsers } from "./useGetUsers";
-import type { UsersRepository } from "../../../repositories/usersRepository";
 
 export const useUserList = (repository: UsersRepository) => {
   const { users, isLoading, error, onDelete, onReset } = useGetUsers(repository);
@@ -12,9 +14,7 @@ export const useUserList = (repository: UsersRepository) => {
   const filteredUsers = useMemo(() => {
     return filterCountry !== null && filterCountry.length > 0 && users
       ? users.filter((user) => {
-          return user.location.country
-            .toLocaleLowerCase()
-            .includes(filterCountry.toLowerCase());
+          return user.location.country.toLocaleLowerCase().includes(filterCountry.toLowerCase());
         })
       : users;
   }, [users, filterCountry]);

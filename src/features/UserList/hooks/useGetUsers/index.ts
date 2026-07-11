@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
-import { User } from "../../logics";
 import { UsersRepository } from "@/repositories/usersRepository";
+
+import { User } from "../../logics";
 
 export const useGetUsers = (repository: UsersRepository) => {
   const queryClient = useQueryClient();

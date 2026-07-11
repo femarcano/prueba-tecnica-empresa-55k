@@ -1,6 +1,7 @@
+import type { UsersRepository } from "@/repositories/usersRepository";
+
 import { useUserList } from "./hooks";
 import { UserListPresentation } from "./presentations";
-import type { UsersRepository } from "../../repositories/usersRepository";
 
 interface UserListProps {
   repository: UsersRepository;
@@ -8,22 +9,8 @@ interface UserListProps {
 
 export const UserList = ({ repository }: UserListProps) => {
   const {
-    state: {
-      users,
-      showColors,
-      sortByCountry,
-      filterCountry,
-      sortedUsers,
-      isLoading,
-      usersError,
-    },
-    actions: {
-      toggleColors,
-      toggleSortByCountry,
-      setFilterCountry,
-      onDelete,
-      onReset,
-    },
+    state: { users, showColors, sortByCountry, filterCountry, sortedUsers, isLoading, usersError },
+    actions: { toggleColors, toggleSortByCountry, setFilterCountry, onDelete, onReset },
   } = useUserList(repository);
 
   return (

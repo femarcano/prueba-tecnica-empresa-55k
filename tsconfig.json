@@ -25,7 +25,7 @@
       "@/features/*": ["./src/features/*"],
       "@/repositories/*": ["./src/repositories/*"],
       "@/types/*": ["./src/types/*"],
-      "@/utils/*": ["./src/utils/*"],
+      "@/utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src"],

@@ -1,7 +1,6 @@
 import "./App.css";
-
-import { UserList } from "./features/UserList";
-import type { UsersRepository } from "./repositories/usersRepository";
+import { UserList } from "@/features/UserList";
+import type { UsersRepository } from "@/repositories/usersRepository";
 
 interface AppProps {
   repository: UsersRepository;
