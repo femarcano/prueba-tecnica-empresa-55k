@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import { User } from "../logics";
 import { UsersList } from "./UsersList";
 
@@ -31,18 +34,18 @@ export const UserListPresentation: React.FC<UserListPresentation> = ({
   return (
     <div className="App">
       <h1>Test</h1>
-      <header>
-        <button onClick={toggleColors}>toggle Colors</button>
-        <button onClick={toggleSortByCountry}>
+      <header className="flex flex-row">
+        <Button onClick={toggleColors}>toggle Colors</Button>
+        <Button onClick={toggleSortByCountry}>
           {sortByCountry ? "no sort by country" : "sort by country"}
-        </button>
-        <button onClick={onReset}>Reset Users</button>
-        <input
+        </Button>
+        <Button onClick={onReset}>Reset Users</Button>
+        <Input
           placeholder="Filter by Country"
           onChange={(e) => {
             setFilterCountry(e.target.value);
           }}
-        ></input>
+        ></Input>
       </header>
       <main>
         {isLoading && <p>Loading users…</p>}
