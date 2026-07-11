@@ -143,3 +143,7 @@ Completion: `pnpm build` passes with zero TS errors.
 ## The existing anchor
 
 `src/features/UserList/` is the canonical example. Read it before scaffolding a new feature — its role layout is the contract this skill enforces. ADR-0001 and ADR-0002 record the seam and layering decisions behind it.
+
+## Worked example
+
+For a complete, minimal feature that mirrors this layout (no `UserList/`-specific code), see [`samples/orders.md`](./samples/orders.md). It walks through every file in the role tree with realistic code, then applies the deletion test to each role so you can see what earns its place.
