@@ -22,12 +22,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/assets/*": ["./src/assets/*"],
+      "@/components/*": ["./src/components/*"],
       "@/features/*": ["./src/features/*"],
       "@/repositories/*": ["./src/repositories/*"],
+      "@/utils/*": ["./src/utils/*"],
       "@/types/*": ["./src/types/*"],
-      "@/utils/*": ["./src/utils/*"]
-    }
+    },
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
 }
