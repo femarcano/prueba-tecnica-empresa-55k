@@ -1,22 +1,4 @@
-declare global {
-    interface Array<T> {
-        toSorted(compareFn?: (a: T, b:T) => number): T[]
-    }
-}
-
-interface APIResult {
-  results: User[];
-  info: Info;
-}
-
-interface Info {
-  seed: string;
-  results: number;
-  page: number;
-  version: string;
-}
-
-interface User {
+export interface User {
   gender: Gender;
   name: Name;
   location: Location;
@@ -31,19 +13,19 @@ interface User {
   nat: string;
 }
 
-interface Dob {
+export interface Dob {
   date: Date;
   age: number;
 }
 
-type Gender = "male" | "female";
+export type Gender = "male" | "female";
 
-interface ID {
+export interface ID {
   name: string;
   value: null | string;
 }
 
-interface Location {
+export interface Location {
   street: Street;
   city: string;
   state: string;
@@ -53,22 +35,22 @@ interface Location {
   timezone: Timezone;
 }
 
-interface Coordinates {
+export interface Coordinates {
   latitude: string;
   longitude: string;
 }
 
-interface Street {
+export interface Street {
   number: number;
   name: string;
 }
 
-interface Timezone {
+export interface Timezone {
   offset: string;
   description: string;
 }
 
-interface Login {
+export interface Login {
   uuid: string;
   username: string;
   password: string;
@@ -78,15 +60,21 @@ interface Login {
   sha256: string;
 }
 
-interface Name {
+export interface Name {
   title: Title;
   first: string;
   last: string;
 }
 
-type Title = "Mr" | "Mademoiselle" | "Mrs" | "Ms" | "Miss" | "Madame";
+export type Title =
+  | "Mr"
+  | "Mademoiselle"
+  | "Mrs"
+  | "Ms"
+  | "Miss"
+  | "Madame";
 
-interface Picture {
+export interface Picture {
   large: string;
   medium: string;
   thumbnail: string;

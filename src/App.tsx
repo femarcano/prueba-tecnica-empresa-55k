@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import "./App.css";
 import { UsersList } from "./components/UsersList";
+import type { UsersRepository } from "./repositories/usersRepository";
+import type { User } from "./types/user";
 
-function App() {
+interface AppProps {
+  repository: UsersRepository;
+}
+
+function App({ repository }: AppProps) {
   const [users, setUsers] = useState<User[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
@@ -44,14 +52,15 @@ function App() {
   };
 
   useEffect(() => {
-    fetch("https://randomuser.me/api/?results=100")
-      .then((res) => res.json())
-      .then((res: APIResult) => {
-        setUsers(res.results);
-        originalUsersRef.current = res.results;
+    repository
+      .getUsers()
+      .then((fetchedUsers) => {
+        setUsers(fetchedUsers);
+        originalUsersRef.current = fetchedUsers;
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => setError(err))
+      .finally(() => setLoading(false));
+  }, [repository]);
 
   return (
     <div className="App">
@@ -70,11 +79,15 @@ function App() {
         ></input>
       </header>
       <main>
-        <UsersList
-          deleteUser={handleDelete}
-          showColors={showColors}
-          users={sortedUsers}
-        />
+        {loading && <p>Loading users…</p>}
+        {error && <p>Error loading users.</p>}
+        {!loading && !error && (
+          <UsersList
+            deleteUser={handleDelete}
+            showColors={showColors}
+            users={sortedUsers}
+          />
+        )}
       </main>
     </div>
   );

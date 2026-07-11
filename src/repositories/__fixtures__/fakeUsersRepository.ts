@@ -1,0 +1,111 @@
+import type { User } from "../../types/user";
+import type { UsersRepository } from "../usersRepository";
+
+export class FakeUsersRepository implements UsersRepository {
+  async getUsers(): Promise<User[]> {
+    return [
+      {
+        gender: "female",
+        name: { title: "Ms", first: "Ada", last: "Lovelace" },
+        location: {
+          street: { number: 1, name: "Analytical Engine Way" },
+          city: "London",
+          state: "England",
+          country: "United Kingdom",
+          postcode: 1,
+          coordinates: { latitude: "0", longitude: "0" },
+          timezone: { offset: "+0:00", description: "London" },
+        },
+        email: "ada@example.com",
+        login: {
+          uuid: "fake-uuid-1",
+          username: "ada1815",
+          password: "password",
+          salt: "salt",
+          md5: "md5",
+          sha1: "sha1",
+          sha256: "sha256",
+        },
+        dob: { date: new Date("1815-12-10"), age: 210 },
+        registered: { date: new Date("2024-01-01"), age: 1 },
+        phone: "000-0000",
+        cell: "000-0001",
+        id: { name: "NINO", value: null },
+        picture: {
+          large: "https://example.com/large.jpg",
+          medium: "https://example.com/medium.jpg",
+          thumbnail: "https://example.com/thumb.jpg",
+        },
+        nat: "GB",
+      },
+      {
+        gender: "male",
+        name: { title: "Mr", first: "Alan", last: "Turing" },
+        location: {
+          street: { number: 2, name: "Bletchley Park" },
+          city: "Milton Keynes",
+          state: "England",
+          country: "United Kingdom",
+          postcode: 2,
+          coordinates: { latitude: "0", longitude: "0" },
+          timezone: { offset: "+0:00", description: "London" },
+        },
+        email: "alan@example.com",
+        login: {
+          uuid: "fake-uuid-2",
+          username: "alan1912",
+          password: "password",
+          salt: "salt",
+          md5: "md5",
+          sha1: "sha1",
+          sha256: "sha256",
+        },
+        dob: { date: new Date("1912-06-23"), age: 113 },
+        registered: { date: new Date("2024-01-01"), age: 1 },
+        phone: "000-0002",
+        cell: "000-0003",
+        id: { name: "NINO", value: null },
+        picture: {
+          large: "https://example.com/large2.jpg",
+          medium: "https://example.com/medium2.jpg",
+          thumbnail: "https://example.com/thumb2.jpg",
+        },
+        nat: "GB",
+      },
+      {
+        gender: "female",
+        name: { title: "Mrs", first: "Marie", last: "Curie" },
+        location: {
+          street: { number: 3, name: "Rue de la Science" },
+          city: "Paris",
+          state: "Île-de-France",
+          country: "France",
+          postcode: 3,
+          coordinates: { latitude: "0", longitude: "0" },
+          timezone: { offset: "+1:00", description: "Paris" },
+        },
+        email: "marie@example.com",
+        login: {
+          uuid: "fake-uuid-3",
+          username: "marie1867",
+          password: "password",
+          salt: "salt",
+          md5: "md5",
+          sha1: "sha1",
+          sha256: "sha256",
+        },
+        dob: { date: new Date("1867-11-07"), age: 158 },
+        registered: { date: new Date("2024-01-01"), age: 1 },
+        phone: "000-0004",
+        cell: "000-0005",
+        id: { name: "NINO", value: null },
+        picture: {
+          large: "https://example.com/large3.jpg",
+          medium: "https://example.com/medium3.jpg",
+          thumbnail: "https://example.com/thumb3.jpg",
+        },
+        nat: "FR",
+      },
+    ];
+  }
+}

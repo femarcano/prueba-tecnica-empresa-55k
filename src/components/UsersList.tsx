@@ -1,3 +1,5 @@
+import type { User } from "../types/user";
+
 interface UsersListsProps {
   deleteUser: (uuid: string) => void
   users: User[] | null;
