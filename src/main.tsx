@@ -2,12 +2,12 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { queryClient } from "@/utils/queryClient.ts";
+import { queryClient } from "@/utils/queryClient";
 
 import App from "./App.tsx";
 
 import "./index.css";
-import { HttpUsersRepository } from "./repositories/usersRepository.ts";
+import { HttpUsersRepository } from "./repositories/usersRepository";
 
 const repository = new HttpUsersRepository();
 
