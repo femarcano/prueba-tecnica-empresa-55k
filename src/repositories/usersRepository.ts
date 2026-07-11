@@ -1,4 +1,5 @@
-import type { User } from "../features/UserList/logics";
+import { User } from "@/features/UserList/logics";
+
 
 export interface UsersRepository {
   getUsers(): Promise<User[]>;
