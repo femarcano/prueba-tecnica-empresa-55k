@@ -1,0 +1,3 @@
+# UsersRepository is a prop at the App boundary
+
+The users data source sits behind a `UsersRepository` interface, with `HttpUsersRepository` as the production adapter. `App` accepts the repository as a prop; `main.tsx` is the composition root that instantiates the adapter. We rejected a custom hook (`useUsers()`) and a module-level singleton — a hook would have bundled the data-source seam with the fetch-lifecycle seam (now owned by TanStack Query in a separate commit), and a singleton would have replaced the network-in-view problem with a globally-imported network that tests can't avoid. Two adapters (HTTP, fake) justify the seam at exactly the threshold.

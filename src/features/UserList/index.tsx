@@ -1,7 +1,12 @@
 import { useUserList } from "./hooks";
 import { UserListPresentation } from "./presentations";
+import type { UsersRepository } from "../../repositories/usersRepository";
 
-export const UserList = () => {
+interface UserListProps {
+  repository: UsersRepository;
+}
+
+export const UserList = ({ repository }: UserListProps) => {
   const {
     state: {
       users,
@@ -19,7 +24,7 @@ export const UserList = () => {
       onDelete,
       onReset,
     },
-  } = useUserList();
+  } = useUserList(repository);
 
   return (
     <UserListPresentation

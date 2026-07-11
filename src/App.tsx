@@ -1,9 +1,14 @@
 import "./App.css";
 
 import { UserList } from "./features/UserList";
+import type { UsersRepository } from "./repositories/usersRepository";
 
-function App() {
-  return <UserList />;
+interface AppProps {
+  repository: UsersRepository;
+}
+
+function App({ repository }: AppProps) {
+  return <UserList repository={repository} />;
 }
 
 export default App;

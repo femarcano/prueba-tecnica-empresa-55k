@@ -1,0 +1,3 @@
+# Repository imports User type from the feature, not from a shared types/ module
+
+`HttpUsersRepository` and `FakeUsersRepository` import the `User` type from `src/features/UserList/logics` rather than from `src/types/user.ts`. The feature owns the schema (Zod is the source of truth; types are inferred via `z.infer`), and the repository depends on the feature because the feature defines the contract. We considered moving the schema up to `src/types/user.ts` to avoid the layering inversion, but rejected it: the UserList feature is the only consumer of the User shape today, and lifting it would create a shared types module that pretends to be domain-neutral while actually being driven by one feature. Lift the schema only when a second feature needs the same type.

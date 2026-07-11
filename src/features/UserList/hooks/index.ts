@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { useGetUsers } from "./useGetUsers";
+import type { UsersRepository } from "../../../repositories/usersRepository";
 
-export const useUserList = () => {
-  const { users, isLoading, error, onDelete, onReset } = useGetUsers();
+export const useUserList = (repository: UsersRepository) => {
+  const { users, isLoading, error, onDelete, onReset } = useGetUsers(repository);
 
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
