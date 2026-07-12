@@ -9,23 +9,33 @@ interface UserListProps {
 
 export const UserList = ({ repository }: UserListProps) => {
   const {
-    state: { users, showColors, sortByCountry, filterCountry, sortedUsers, isLoading, usersError },
+    state: {
+      users,
+      showColors,
+      sortByCountry,
+      filterCountry,
+      sortedUsers,
+      isLoading,
+      usersError,
+      tableData,
+    },
     actions: { toggleColors, toggleSortByCountry, setFilterCountry, onDelete, onReset },
   } = useUserList(repository);
 
   return (
     <UserListPresentation
-      showColors={showColors}
-      sortByCountry={sortByCountry}
-      filterCountry={filterCountry}
-      sortedUsers={sortedUsers}
-      isLoading={isLoading}
       error={usersError}
-      toggleColors={toggleColors}
-      toggleSortByCountry={toggleSortByCountry}
-      setFilterCountry={setFilterCountry}
+      filterCountry={filterCountry}
+      isLoading={isLoading}
       onDelete={onDelete}
       onReset={onReset}
+      setFilterCountry={setFilterCountry}
+      showColors={showColors}
+      sortByCountry={sortByCountry}
+      sortedUsers={sortedUsers}
+      tableData={tableData}
+      toggleColors={toggleColors}
+      toggleSortByCountry={toggleSortByCountry}
       users={users}
     />
   );

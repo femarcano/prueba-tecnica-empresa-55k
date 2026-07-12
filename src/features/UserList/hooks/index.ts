@@ -1,7 +1,9 @@
+import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 
 import type { UsersRepository } from "@/repositories/usersRepository";
 
+import { createUserDataTableColumns } from "../logics";
 import { useGetUsers } from "./useGetUsers";
 
 export const useUserList = (repository: UsersRepository) => {
@@ -27,6 +29,12 @@ export const useUserList = (repository: UsersRepository) => {
       : filteredUsers;
   }, [filteredUsers, sortByCountry]);
 
+  const tableData = useReactTable({
+    columns: createUserDataTableColumns({ onDelete }),
+    data: sortedUsers ?? [],
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   const toggleColors = () => {
     setShowColors(!showColors);
   };
@@ -44,6 +52,7 @@ export const useUserList = (repository: UsersRepository) => {
       isLoading,
       usersError: error,
       users,
+      tableData,
     },
     actions: {
       toggleColors,
