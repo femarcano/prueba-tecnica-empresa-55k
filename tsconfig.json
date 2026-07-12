@@ -26,9 +26,9 @@
       "@/features/*": ["./src/features/*"],
       "@/repositories/*": ["./src/repositories/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@/types/*": ["./src/types/*"],
-    },
+      "@/types/*": ["./src/types/*"]
+    }
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -73,7 +73,11 @@ import type { OrdersRepository } from "../../../../repositories/ordersRepository
 import type { Order } from "../../logics";
 
 export const useGetOrders = (repository: OrdersRepository) => {
-  const { data: orders = null, isLoading, error } = useQuery<Order[]>({
+  const {
+    data: orders = null,
+    isLoading,
+    error,
+  } = useQuery<Order[]>({
     queryKey: ["orders"],
     queryFn: () => repository.getOrders(),
   });
@@ -82,6 +86,7 @@ export const useGetOrders = (repository: OrdersRepository) => {
 ```
 
 What this file does NOT do:
+
 - `new OrdersRepository()` — that's the singleton pattern; the parameter is the seam.
 - Local `useState` — that's view state; it lives in the presentation.
 - Filters, sorts, derived data — those are pure derivations; the presentation handles them.
@@ -159,20 +164,13 @@ interface OrdersViewProps {
   onDelete: (id: string) => void;
 }
 
-export const OrdersView = ({
-  orders,
-  isLoading,
-  error,
-  onDelete,
-}: OrdersViewProps) => {
+export const OrdersView = ({ orders, isLoading, error, onDelete }: OrdersViewProps) => {
   return (
     <div>
       <h1>Orders</h1>
       {isLoading && <p>Loading orders…</p>}
       {error && <p>Error loading orders.</p>}
-      {orders && !isLoading && !error && (
-        <OrdersList orders={orders} onDelete={onDelete} />
-      )}
+      {orders && !isLoading && !error && <OrdersList orders={orders} onDelete={onDelete} />}
     </div>
   );
 };
@@ -216,7 +214,7 @@ import { HttpOrdersRepository } from "./repositories/ordersRepository";
 
 const ordersRepository = new HttpOrdersRepository();
 
-<App ordersRepository={ordersRepository} />
+<App ordersRepository={ordersRepository} />;
 ```
 
 `main.tsx` is the only file that names a concrete adapter. Tests substitute the fake here.
