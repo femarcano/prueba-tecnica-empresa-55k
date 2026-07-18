@@ -3,11 +3,11 @@ import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 const r = (p: string) => resolve(fileURLToPath(new URL(".", import.meta.url)), p);
 
-export const aliases = [
+const aliases = [
   { find: "@", replacement: r("src") },
   { find: "@/assets", replacement: r("src/assets") },
   { find: "@/features", replacement: r("src/features") },
@@ -16,17 +16,15 @@ export const aliases = [
   { find: "@/utils", replacement: r("src/utils") },
 ];
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: aliases,
   },
-  optimizeDeps: {
-    rolldownOptions: {
-      resolve: {
-        alias: aliases,
-      },
-    },
+  test: {
+    css: false,
+    environment: "jsdom",
+    globals: false,
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
 });
