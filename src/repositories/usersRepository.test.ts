@@ -53,6 +53,7 @@ describe("HttpUsersRepository", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
+        ok: true,
         json: async () => payload([validUser(), validUser({ email: "two@example.com" })]),
       })),
     );
@@ -70,6 +71,7 @@ describe("HttpUsersRepository", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
+        ok: true,
         json: async () => payload([validUser({ email: 12345 })]),
       })),
     );
@@ -83,6 +85,7 @@ describe("HttpUsersRepository", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
+        ok: true,
         json: async () => ({ results: { not: "an array" }, info: {} }),
       })),
     );
@@ -103,5 +106,21 @@ describe("HttpUsersRepository", () => {
     const repo = new HttpUsersRepository();
 
     await expect(repo.getUsers()).rejects.toThrow("network down");
+  });
+
+  it("throws a descriptive HTTP error when the upstream is non-2xx", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        status: 503,
+        url: "https://randomuser.me/api/?results=100",
+        json: async () => ({ error: "down" }),
+      })),
+    );
+
+    const repo = new HttpUsersRepository();
+
+    await expect(repo.getUsers()).rejects.toThrow(/503/);
   });
 });
