@@ -1,20 +1,13 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
-import { UsersRepository } from "@/repositories/usersRepository";
+import { getUsers } from "@/apis/queries/getUsers";
 
 import { User } from "../../logics";
 
-export const useGetUsers = (repository: UsersRepository) => {
+export const useGetUsers = () => {
   const queryClient = useQueryClient();
-  const {
-    data: users = null,
-    isLoading,
-    error,
-  } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: () => repository.getUsers(),
-  });
+  const { data: users = null, isLoading, error } = useQuery(getUsers());
 
   const originalUsersRef = useRef<User[] | null>(null);
   if (users && originalUsersRef.current === null) {
@@ -33,10 +26,10 @@ export const useGetUsers = (repository: UsersRepository) => {
     }
   };
   return {
-    users,
-    isLoading,
     error,
+    isLoading,
     onDelete: handleDelete,
     onReset: handleReset,
+    users,
   };
 };

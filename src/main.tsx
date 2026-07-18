@@ -7,14 +7,11 @@ import { queryClient } from "@/utils/queryClient";
 import App from "./App.tsx";
 
 import "./index.css";
-import { HttpUsersRepository } from "./repositories/usersRepository";
-
-const repository = new HttpUsersRepository();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App repository={repository} />
+      <App />
     </QueryClientProvider>
   </React.StrictMode>,
 );

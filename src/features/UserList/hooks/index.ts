@@ -1,13 +1,11 @@
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 
-import type { UsersRepository } from "@/repositories/usersRepository";
-
 import { createUserDataTableColumns } from "../logics";
 import { useGetUsers } from "./useGetUsers";
 
-export const useUserList = (repository: UsersRepository) => {
-  const { users, isLoading, error, onDelete, onReset } = useGetUsers(repository);
+export const useUserList = () => {
+  const { users, isLoading, error, onDelete, onReset } = useGetUsers();
 
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
@@ -44,22 +42,22 @@ export const useUserList = (repository: UsersRepository) => {
   };
 
   return {
-    state: {
-      showColors,
-      sortByCountry,
-      filterCountry,
-      sortedUsers,
-      isLoading,
-      usersError: error,
-      users,
-      tableData,
-    },
     actions: {
-      toggleColors,
-      toggleSortByCountry,
-      setFilterCountry,
       onDelete,
       onReset,
+      setFilterCountry,
+      toggleColors,
+      toggleSortByCountry,
+    },
+    state: {
+      filterCountry,
+      isLoading,
+      showColors,
+      sortByCountry,
+      sortedUsers,
+      tableData,
+      users,
+      usersError: error,
     },
   };
 };

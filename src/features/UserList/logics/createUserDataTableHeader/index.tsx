@@ -14,7 +14,6 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
   return [
     {
       accessorKey: "picture.thumbnail",
-      header: () => <p className="text-center">Photo</p>,
       cell: ({ row }) => {
         return (
           <Avatar>
@@ -25,13 +24,14 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
           </Avatar>
         );
       },
+      header: () => <p className="text-center">Photo</p>,
     },
     {
       accessorKey: "name",
-      header: () => <p className="text-center">Name</p>,
       cell: ({ row }) => {
         return `${row.original.name.title} ${row.original.name.first} ${row.original.name.last}`;
       },
+      header: () => <p className="text-center">Name</p>,
     },
     {
       accessorKey: "email",
@@ -54,8 +54,6 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
       header: () => <p className="text-center">Country</p>,
     },
     {
-      id: "delete",
-      header: () => <p className="text-center">Delete</p>,
       cell: ({ row }) => {
         return (
           <button
@@ -69,6 +67,8 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
           </button>
         );
       },
+      header: () => <p className="text-center">Delete</p>,
+      id: "delete",
     },
   ];
 };

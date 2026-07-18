@@ -13,11 +13,10 @@ import {
 import type { User } from "../../logics";
 
 interface UsersListsProps {
-  deleteUser: (uuid: string) => void;
   tableData: TTable<User>;
 }
 
-export const UsersList: React.FC<UsersListsProps> = ({ deleteUser, tableData }) => {
+export const UsersList: React.FC<UsersListsProps> = ({ tableData }) => {
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>

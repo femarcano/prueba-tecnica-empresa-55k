@@ -7,10 +7,8 @@ import { User } from "../logics";
 import { UsersList } from "./UsersList";
 
 type UserListPresentation = {
-  users: User[] | null;
   isLoading: boolean;
   error: Error | null;
-  onDelete: (uuid: string) => void;
   onReset: () => void;
   showColors: boolean;
   toggleColors: () => void;
@@ -25,15 +23,12 @@ type UserListPresentation = {
 export const UserListPresentation: React.FC<UserListPresentation> = ({
   toggleColors,
   toggleSortByCountry,
-  onDelete,
   onReset,
   setFilterCountry,
   isLoading,
   error,
-  showColors,
   sortByCountry,
   tableData,
-  users,
 }) => {
   return (
     <div className="App">
@@ -54,7 +49,7 @@ export const UserListPresentation: React.FC<UserListPresentation> = ({
       <main>
         {isLoading && <p>Loading users…</p>}
         {error && <p>Error loading users.</p>}
-        {!isLoading && !error && <UsersList deleteUser={onDelete} tableData={tableData} />}
+        {!isLoading && !error && <UsersList tableData={tableData} />}
       </main>
     </div>
   );

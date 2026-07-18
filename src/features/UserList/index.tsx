@@ -1,16 +1,9 @@
-import type { UsersRepository } from "@/repositories/usersRepository";
-
 import { useUserList } from "./hooks";
 import { UserListPresentation } from "./presentations";
 
-interface UserListProps {
-  repository: UsersRepository;
-}
-
-export const UserList = ({ repository }: UserListProps) => {
+export const UserList = () => {
   const {
     state: {
-      users,
       showColors,
       sortByCountry,
       filterCountry,
@@ -19,15 +12,14 @@ export const UserList = ({ repository }: UserListProps) => {
       usersError,
       tableData,
     },
-    actions: { toggleColors, toggleSortByCountry, setFilterCountry, onDelete, onReset },
-  } = useUserList(repository);
+    actions: { toggleColors, toggleSortByCountry, setFilterCountry, onReset },
+  } = useUserList();
 
   return (
     <UserListPresentation
       error={usersError}
       filterCountry={filterCountry}
       isLoading={isLoading}
-      onDelete={onDelete}
       onReset={onReset}
       setFilterCountry={setFilterCountry}
       showColors={showColors}
@@ -36,7 +28,6 @@ export const UserList = ({ repository }: UserListProps) => {
       tableData={tableData}
       toggleColors={toggleColors}
       toggleSortByCountry={toggleSortByCountry}
-      users={users}
     />
   );
 };
