@@ -26,7 +26,7 @@ export const locationSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  uuid: z.uuidv7(),
+  uuid: z.uuid(),
   username: z.string(),
   password: z.string(),
   salt: z.string(),
@@ -36,7 +36,7 @@ export const loginSchema = z.object({
 });
 
 export const dobSchema = z.object({
-  date: z.date(),
+  date: z.coerce.date(),
   age: z.number(),
 });
 

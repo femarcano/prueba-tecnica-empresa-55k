@@ -1,11 +1,11 @@
-import { User } from "@/features/UserList/logics";
+import { userSchema, type User } from "@/features/UserList/logics";
 
 export interface UsersRepository {
   getUsers(): Promise<User[]>;
 }
 
 interface RandomUserApiResponse {
-  results: User[];
+  results: unknown;
   info: {
     seed: string;
     results: number;
@@ -18,6 +18,6 @@ export class HttpUsersRepository implements UsersRepository {
   async getUsers(): Promise<User[]> {
     const res = await fetch("https://randomuser.me/api/?results=100");
     const json = (await res.json()) as RandomUserApiResponse;
-    return json.results;
+    return userSchema.array().parse(json.results);
   }
 }
