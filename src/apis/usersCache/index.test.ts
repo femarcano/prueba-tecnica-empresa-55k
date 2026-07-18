@@ -1,8 +1,9 @@
-import { QueryClient } from "@tanstack/react-query";
-import { describe, expect, it } from "vitest";
+import { QueryClient, type QueryFunctionContext } from "@tanstack/react-query";
+import { describe, expect, it, vi } from "vitest";
 
 import { GET_USERS_KEY } from "@/apis/keys";
 import type { User } from "@/features/UserList/logics";
+import type { UsersRepository } from "@/repositories/usersRepository";
 
 import { makeUsersCache } from "./index";
 
@@ -24,16 +25,67 @@ function user(uuid: string): User {
   } as unknown as User;
 }
 
-function setup(initial: User[], snapshot?: User[]) {
+function fakeRepository(getUsers: UsersRepository["getUsers"]): UsersRepository {
+  return { getUsers: vi.fn(getUsers) };
+}
+
+function setup(initial: User[] | null, snapshot?: User[], repository?: UsersRepository) {
   const queryClient = new QueryClient();
-  queryClient.setQueryData<User[]>(GET_USERS_KEY, initial);
+  if (initial !== null) {
+    queryClient.setQueryData<User[]>(GET_USERS_KEY, initial);
+  }
   if (snapshot) {
     queryClient.setQueryData<User[]>(USERS_SNAPSHOT_KEY, snapshot);
   }
-  return { queryClient, cache: makeUsersCache(queryClient) };
+  const repo = repository ?? fakeRepository(async () => []);
+  return { queryClient, cache: makeUsersCache(queryClient, repo), repository: repo };
 }
 
+const noopContext = {} as QueryFunctionContext<typeof GET_USERS_KEY>;
+
 describe("makeUsersCache", () => {
+  describe("query", () => {
+    it("returns the users from the repository", async () => {
+      const users = [user("alice"), user("bob")];
+      const { cache } = setup(null, undefined, fakeRepository(async () => users));
+
+      const result = await cache.query().queryFn!(noopContext);
+
+      expect(result).toEqual(users);
+    });
+
+    it("writes the snapshot on the first call", async () => {
+      const users = [user("alice"), user("bob")];
+      const { queryClient, cache } = setup(null, undefined, fakeRepository(async () => users));
+
+      await cache.query().queryFn!(noopContext);
+
+      expect(queryClient.getQueryData<User[]>(USERS_SNAPSHOT_KEY)).toEqual(users);
+    });
+
+    it("does not overwrite the snapshot on subsequent calls", async () => {
+      const first = [user("alice")];
+      const second = [user("alice"), user("bob")];
+      const getUsers = vi
+        .fn<UsersRepository["getUsers"]>()
+        .mockResolvedValueOnce(first)
+        .mockResolvedValueOnce(second);
+      const { queryClient, cache } = setup(null, undefined, fakeRepository(getUsers));
+
+      await cache.query().queryFn!(noopContext);
+      await cache.query().queryFn!(noopContext);
+
+      expect(queryClient.getQueryData<User[]>(USERS_SNAPSHOT_KEY)).toEqual(first);
+    });
+
+    it("propagates errors from the repository", async () => {
+      const getUsers = vi.fn<UsersRepository["getUsers"]>().mockRejectedValue(new Error("boom"));
+      const { cache } = setup(null, undefined, fakeRepository(getUsers));
+
+      await expect(cache.query().queryFn!(noopContext)).rejects.toThrow("boom");
+    });
+  });
+
   describe("remove", () => {
     it("filters the user with the matching uuid out of the cache", () => {
       const alice = user("alice");
@@ -56,7 +108,7 @@ describe("makeUsersCache", () => {
 
     it("does nothing when the cache has no data", () => {
       const queryClient = new QueryClient();
-      const cache = makeUsersCache(queryClient);
+      const cache = makeUsersCache(queryClient, fakeRepository(async () => []));
 
       cache.remove("alice");
 
