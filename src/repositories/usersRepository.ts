@@ -6,12 +6,7 @@ export interface UsersRepository {
 
 interface RandomUserApiResponse {
   results: unknown;
-  info: {
-    seed: string;
-    results: number;
-    page: number;
-    version: string;
-  };
+  info: unknown;
 }
 
 export class HttpUsersRepository implements UsersRepository {
