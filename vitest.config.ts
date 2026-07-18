@@ -23,7 +23,7 @@ export default defineConfig({
   },
   test: {
     css: false,
-    environment: "jsdom",
+    environment: "happy-dom",
     globals: false,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
