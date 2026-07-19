@@ -21,7 +21,7 @@ function makeWrapper({
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       <RepositoriesProvider value={{ users: repository }}>
-        <Suspense>{children}</Suspense>
+        <Suspense fallback={<p>Loading users…</p>}>{children}</Suspense>
       </RepositoriesProvider>
     </QueryClientProvider>
   );
