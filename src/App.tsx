@@ -1,7 +1,7 @@
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import "./App.css";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { UserList } from "@/features/UserList";
 
 function App() {

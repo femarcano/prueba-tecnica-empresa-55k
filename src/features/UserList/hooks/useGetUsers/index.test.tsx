@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, renderHook, waitFor } from "@testing-library/react";
-import { Component, type ReactNode, Suspense } from "react";
+import { type ReactNode, Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { describe, expect, it, vi } from "vitest";
 
 import { RepositoriesProvider } from "@/contexts/RepositoriesContext";
@@ -27,21 +28,6 @@ function makeWrapper({
   );
 }
 
-class CaptureErrorBoundary extends Component<
-  { children: ReactNode },
-  { hasError: boolean }
-> {
-  state = { hasError: false };
-  static caughtError: { current: Error | null } = { current: null };
-  static getDerivedStateFromError(error: Error): { hasError: boolean } {
-    CaptureErrorBoundary.caughtError.current = error;
-    return { hasError: true };
-  }
-  render() {
-    return this.state.hasError ? null : this.props.children;
-  }
-}
-
 describe("useGetUsers", () => {
   it("resolves and returns users from the repository", async () => {
     const repository = new FakeUsersRepository();
@@ -57,7 +43,7 @@ describe("useGetUsers", () => {
   });
 
   it("throws to a boundary when the repository rejects", async () => {
-    CaptureErrorBoundary.caughtError = { current: null };
+    const capturedError: { current: Error | null } = { current: null };
     const getUsers = vi.fn<UsersRepository["getUsers"]>().mockRejectedValue(new Error("boom"));
     const wrapper = makeWrapper({ repository: { getUsers } });
 
@@ -67,14 +53,19 @@ describe("useGetUsers", () => {
     };
 
     render(
-      <CaptureErrorBoundary>
+      <ErrorBoundary
+        fallback={null}
+        onError={(error) => {
+          capturedError.current = error as Error;
+        }}
+      >
         <Probe />
-      </CaptureErrorBoundary>,
+      </ErrorBoundary>,
       { wrapper },
     );
 
     await waitFor(() => {
-      expect(CaptureErrorBoundary.caughtError.current?.message).toBe("boom");
+      expect(capturedError.current?.message).toBe("boom");
     });
   });
 });
