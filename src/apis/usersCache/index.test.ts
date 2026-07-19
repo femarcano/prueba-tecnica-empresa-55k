@@ -7,8 +7,6 @@ import type { UsersRepository } from "@/repositories/usersRepository";
 
 import { makeUsersCache } from "./index";
 
-const USERS_SNAPSHOT_KEY = [...GET_USERS_KEY, "snapshot"] as const;
-
 function user(uuid: string): User {
   return {
     gender: "female",
@@ -29,13 +27,10 @@ function fakeRepository(getUsers: UsersRepository["getUsers"]): UsersRepository 
   return { getUsers: vi.fn(getUsers) };
 }
 
-function setup(initial: User[] | null, snapshot?: User[], repository?: UsersRepository) {
+function setup(initial: User[] | null, repository?: UsersRepository) {
   const queryClient = new QueryClient();
   if (initial !== null) {
     queryClient.setQueryData<User[]>(GET_USERS_KEY, initial);
-  }
-  if (snapshot) {
-    queryClient.setQueryData<User[]>(USERS_SNAPSHOT_KEY, snapshot);
   }
   const repo = repository ?? fakeRepository(async () => []);
   return { queryClient, cache: makeUsersCache(queryClient, repo), repository: repo };
@@ -47,40 +42,16 @@ describe("makeUsersCache", () => {
   describe("query", () => {
     it("returns the users from the repository", async () => {
       const users = [user("alice"), user("bob")];
-      const { cache } = setup(null, undefined, fakeRepository(async () => users));
+      const { cache } = setup(null, fakeRepository(async () => users));
 
       const result = await cache.query().queryFn!(noopContext);
 
       expect(result).toEqual(users);
     });
 
-    it("writes the snapshot on the first call", async () => {
-      const users = [user("alice"), user("bob")];
-      const { queryClient, cache } = setup(null, undefined, fakeRepository(async () => users));
-
-      await cache.query().queryFn!(noopContext);
-
-      expect(queryClient.getQueryData<User[]>(USERS_SNAPSHOT_KEY)).toEqual(users);
-    });
-
-    it("does not overwrite the snapshot on subsequent calls", async () => {
-      const first = [user("alice")];
-      const second = [user("alice"), user("bob")];
-      const getUsers = vi
-        .fn<UsersRepository["getUsers"]>()
-        .mockResolvedValueOnce(first)
-        .mockResolvedValueOnce(second);
-      const { queryClient, cache } = setup(null, undefined, fakeRepository(getUsers));
-
-      await cache.query().queryFn!(noopContext);
-      await cache.query().queryFn!(noopContext);
-
-      expect(queryClient.getQueryData<User[]>(USERS_SNAPSHOT_KEY)).toEqual(first);
-    });
-
     it("propagates errors from the repository", async () => {
       const getUsers = vi.fn<UsersRepository["getUsers"]>().mockRejectedValue(new Error("boom"));
-      const { cache } = setup(null, undefined, fakeRepository(getUsers));
+      const { cache } = setup(null, fakeRepository(getUsers));
 
       await expect(cache.query().queryFn!(noopContext)).rejects.toThrow("boom");
     });
@@ -122,48 +93,60 @@ describe("makeUsersCache", () => {
 
       expect(queryClient.getQueryData<User[]>(GET_USERS_KEY)).toEqual([]);
     });
-
-    it("does not touch the snapshot key", () => {
-      const alice = user("alice");
-      const bob = user("bob");
-      const snapshot = [alice, bob];
-      const { queryClient, cache } = setup([alice], snapshot);
-
-      cache.remove("alice");
-
-      expect(queryClient.getQueryData<User[]>(USERS_SNAPSHOT_KEY)).toEqual(snapshot);
-    });
   });
 
   describe("reset", () => {
-    it("restores the snapshot to the main key", () => {
-      const alice = user("alice");
-      const bob = user("bob");
-      const { queryClient, cache } = setup([bob], [alice, bob]);
+    it("invalidates the users query so the next fetch returns fresh data", async () => {
+      const initial = [user("alice")];
+      const refreshed = [user("alice"), user("bob")];
+      const getUsers = vi
+        .fn<UsersRepository["getUsers"]>()
+        .mockResolvedValueOnce(initial)
+        .mockResolvedValueOnce(refreshed);
+      const queryClient = new QueryClient();
+      const cache = makeUsersCache(queryClient, fakeRepository(getUsers));
+
+      expect(await queryClient.fetchQuery(cache.query())).toEqual(initial);
 
       cache.reset();
-
-      expect(queryClient.getQueryData<User[]>(GET_USERS_KEY)).toEqual([alice, bob]);
+      expect(await queryClient.fetchQuery(cache.query())).toEqual(refreshed);
     });
 
-    it("does nothing when no snapshot exists", () => {
-      const alice = user("alice");
-      const { queryClient, cache } = setup([alice]);
+    it("does nothing when no data is cached", () => {
+      const { cache } = setup(null);
 
-      cache.reset();
-
-      expect(queryClient.getQueryData<User[]>(GET_USERS_KEY)).toEqual([alice]);
+      expect(() => cache.reset()).not.toThrow();
     });
 
-    it("round-trips: remove then reset brings back the snapshot", () => {
+    it("round-trips: remove then reset brings back the full list from the API", async () => {
       const alice = user("alice");
       const bob = user("bob");
-      const { queryClient, cache } = setup([alice, bob], [alice, bob]);
+      const getUsers = vi.fn<UsersRepository["getUsers"]>().mockResolvedValue([alice, bob]);
+      const queryClient = new QueryClient();
+      const cache = makeUsersCache(queryClient, fakeRepository(getUsers));
 
+      await queryClient.fetchQuery(cache.query());
       cache.remove("alice");
-      cache.reset();
+      expect(queryClient.getQueryData<User[]>(GET_USERS_KEY)).toEqual([bob]);
 
-      expect(queryClient.getQueryData<User[]>(GET_USERS_KEY)).toEqual([alice, bob]);
+      cache.reset();
+      expect(await queryClient.fetchQuery(cache.query())).toEqual([alice, bob]);
+    });
+
+    it("surfaces upstream changes: reset reflects new users that appeared since the first fetch", async () => {
+      const first = [user("alice")];
+      const withNewcomer = [user("alice"), user("newcomer")];
+      const getUsers = vi
+        .fn<UsersRepository["getUsers"]>()
+        .mockResolvedValueOnce(first)
+        .mockResolvedValueOnce(withNewcomer);
+      const queryClient = new QueryClient();
+      const cache = makeUsersCache(queryClient, fakeRepository(getUsers));
+
+      await queryClient.fetchQuery(cache.query());
+
+      cache.reset();
+      expect(await queryClient.fetchQuery(cache.query())).toEqual(withNewcomer);
     });
   });
 });
