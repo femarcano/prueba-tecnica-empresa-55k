@@ -3,28 +3,17 @@ import { UserListPresentation } from "./presentations";
 
 export const UserList = () => {
   const {
-    state: {
-      showColors,
-      sortByCountry,
-      filterCountry,
-      sortedUsers,
-      isLoading,
-      usersError,
-      tableData,
-    },
+    state: { showColors, sortByCountry, filterCountry, tableData },
     actions: { toggleColors, toggleSortByCountry, setFilterCountry, onReset },
   } = useUserList();
 
   return (
     <UserListPresentation
-      error={usersError}
       filterCountry={filterCountry}
-      isLoading={isLoading}
       onReset={onReset}
       setFilterCountry={setFilterCountry}
       showColors={showColors}
       sortByCountry={sortByCountry}
-      sortedUsers={sortedUsers}
       tableData={tableData}
       toggleColors={toggleColors}
       toggleSortByCountry={toggleSortByCountry}

@@ -5,14 +5,14 @@ import { createUserDataTableColumns } from "../logics";
 import { useGetUsers } from "./useGetUsers";
 
 export const useUserList = () => {
-  const { users, isLoading, error, onDelete, onReset } = useGetUsers();
+  const { users, onDelete, onReset } = useGetUsers();
 
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
 
   const filteredUsers = useMemo(() => {
-    return filterCountry !== null && filterCountry.length > 0 && users
+    return filterCountry !== null && filterCountry.length > 0
       ? users.filter((user) => {
           return user.location.country.toLocaleLowerCase().includes(filterCountry.toLowerCase());
         })
@@ -21,7 +21,7 @@ export const useUserList = () => {
 
   const sortedUsers = useMemo(() => {
     return sortByCountry
-      ? [...(filteredUsers ?? [])].sort((a, b) => {
+      ? [...filteredUsers].sort((a, b) => {
           return a.location.country.localeCompare(b.location.country);
         })
       : filteredUsers;
@@ -29,7 +29,7 @@ export const useUserList = () => {
 
   const tableData = useReactTable({
     columns: createUserDataTableColumns({ onDelete }),
-    data: sortedUsers ?? [],
+    data: sortedUsers,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -51,13 +51,11 @@ export const useUserList = () => {
     },
     state: {
       filterCountry,
-      isLoading,
       showColors,
       sortByCountry,
       sortedUsers,
       tableData,
       users,
-      usersError: error,
     },
   };
 };
