@@ -7,15 +7,12 @@ import { User } from "../logics";
 import { UsersList } from "./UsersList";
 
 type UserListPresentation = {
-  isLoading: boolean;
-  error: Error | null;
   onReset: () => void;
   showColors: boolean;
   toggleColors: () => void;
   sortByCountry: boolean;
   toggleSortByCountry: () => void;
   setFilterCountry: (country: string) => void;
-  sortedUsers: User[] | null;
   filterCountry: string | null;
   tableData: TanstackTable<User>;
 };
@@ -25,8 +22,6 @@ export const UserListPresentation: React.FC<UserListPresentation> = ({
   toggleSortByCountry,
   onReset,
   setFilterCountry,
-  isLoading,
-  error,
   sortByCountry,
   tableData,
 }) => {
@@ -47,9 +42,7 @@ export const UserListPresentation: React.FC<UserListPresentation> = ({
         <Button onClick={onReset}>Reset Users</Button>
       </header>
       <main>
-        {isLoading && <p>Loading users…</p>}
-        {error && <p>Error loading users.</p>}
-        {!isLoading && !error && <UsersList tableData={tableData} />}
+        <UsersList tableData={tableData} />
       </main>
     </div>
   );

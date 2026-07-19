@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 
 import { makeUsersCache } from "@/apis/usersCache";
 import { useRepositories } from "@/contexts/RepositoriesContext";
@@ -8,11 +8,9 @@ export const useGetUsers = () => {
   const { users: usersRepository } = useRepositories();
   const cache = makeUsersCache(queryClient, usersRepository);
 
-  const { data: users = null, isLoading, error } = useQuery(cache.query());
+  const { data: users } = useSuspenseQuery(cache.query());
 
   return {
-    error,
-    isLoading,
     onDelete: cache.remove,
     onReset: cache.reset,
     users,
