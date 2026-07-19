@@ -148,5 +148,23 @@ describe("makeUsersCache", () => {
       cache.reset();
       expect(await queryClient.fetchQuery(cache.query())).toEqual(withNewcomer);
     });
+
+    it("suspendable round-trip: returns prefilled cache without hitting the repo, then refetches after reset", async () => {
+      const prefilled = [user("alice")];
+      const refreshed = [user("bob")];
+      const getUsers = vi.fn<UsersRepository["getUsers"]>().mockResolvedValue(refreshed);
+      const queryClient = new QueryClient();
+      const cache = makeUsersCache(queryClient, fakeRepository(getUsers));
+
+      queryClient.setQueryData<User[]>(GET_USERS_KEY, prefilled);
+
+      expect(await queryClient.fetchQuery(cache.query())).toEqual(prefilled);
+      expect(getUsers).not.toHaveBeenCalled();
+
+      cache.reset();
+
+      expect(await queryClient.fetchQuery(cache.query())).toEqual(refreshed);
+      expect(getUsers).toHaveBeenCalledTimes(1);
+    });
   });
 });
