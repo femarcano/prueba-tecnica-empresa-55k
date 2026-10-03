@@ -2,7 +2,7 @@ import type { Table as TanstackTable } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { User } from "@/repositories/usersRepository";
+import type { User } from "@/apis/usersCache";
 
 import { UsersList } from "./UsersList";
 

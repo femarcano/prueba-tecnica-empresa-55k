@@ -7,8 +7,12 @@ The `User` type and the runtime Zod schema are both generated from `openapi.yaml
 - `src/apis/__generated__/client/randomuser.ts` — typed `fetch` client.
 - `src/apis/__generated__/zod/randomuserMe.ts` — Zod 4 schema for runtime validation.
 
-`HttpUsersRepository` and `FakeUsersRepository` import `type User` from `./usersRepository`, where it is re-exported as `z.infer<typeof GetRandomUsersResponse.shape.results>[number]`. Consumers in `apis/usersCache` import it from the same module.
+`type User` is derived from the generated Zod schema in `src/apis/usersCache/fetchUsers.ts`:
 
-We rejected the previous hand-rolled `userSchema` in `src/features/UserList/logics/schema/` because the upstream contract is `randomuser.me`, not the feature — hand-writing the schema put the contract definition in two and drifted. Generating from an OpenAPI spec ties the contract to one document.
+```ts
+export type User = z.infer<typeof GetRandomUsersResponse>["results"][number];
+```
 
-The OpenAPI spec lives at the repo root (`openapi.yaml`) rather than next to the repository because it describes an external service, not our application code.
+`fetchUsers` calls the orval client and Zod-parses the response. It is the only consumer of the generated artifacts. Feature code (`useGetUsers`, table headers, presentations) imports `User` from `@/apis/usersCache`.
+
+The OpenAPI spec lives at the repo root (`openapi.yaml`) rather than next to a feature because it describes an external service, not our application code.

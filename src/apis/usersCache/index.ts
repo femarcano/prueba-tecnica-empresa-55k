@@ -1,13 +1,16 @@
 import { queryOptions, type QueryClient } from "@tanstack/react-query";
 
 import { GET_USERS_KEY } from "@/apis/keys";
-import type { User, UsersRepository } from "@/repositories/usersRepository";
 
-export function makeUsersCache(queryClient: QueryClient, repository: UsersRepository) {
+import { fetchUsers, type User } from "./fetchUsers";
+
+export type { User };
+
+export function makeUsersCache(queryClient: QueryClient) {
   return {
     query() {
       return queryOptions({
-        queryFn: () => repository.getUsers(),
+        queryFn: fetchUsers,
         queryKey: GET_USERS_KEY,
         staleTime: 1000 * 60 * 5,
       });

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ZodError } from "zod";
 
-import { HttpUsersRepository } from "./usersRepository";
+import { fetchUsers } from "./fetchUsers";
 
 function validUser(overrides: Record<string, unknown> = {}) {
   return {
@@ -56,7 +56,7 @@ function fetchResponse(status: number, body: unknown) {
   };
 }
 
-describe("HttpUsersRepository", () => {
+describe("fetchUsers", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
@@ -67,8 +67,7 @@ describe("HttpUsersRepository", () => {
       vi.fn(async () => fetchResponse(200, payload([validUser(), validUser({ email: "two@example.com" })]))),
     );
 
-    const repo = new HttpUsersRepository();
-    const users = await repo.getUsers();
+    const users = await fetchUsers();
 
     expect(users).toHaveLength(2);
     expect(users[0].email).toBe("test@example.com");
@@ -81,9 +80,7 @@ describe("HttpUsersRepository", () => {
       vi.fn(async () => fetchResponse(200, payload([validUser({ email: 12345 })]))),
     );
 
-    const repo = new HttpUsersRepository();
-
-    await expect(repo.getUsers()).rejects.toBeInstanceOf(ZodError);
+    await expect(fetchUsers()).rejects.toBeInstanceOf(ZodError);
   });
 
   it("throws a ZodError when the payload is not an array", async () => {
@@ -92,9 +89,7 @@ describe("HttpUsersRepository", () => {
       vi.fn(async () => fetchResponse(200, { results: { not: "an array" }, info: {} })),
     );
 
-    const repo = new HttpUsersRepository();
-
-    await expect(repo.getUsers()).rejects.toBeInstanceOf(ZodError);
+    await expect(fetchUsers()).rejects.toBeInstanceOf(ZodError);
   });
 
   it("propagates non-validation errors from fetch unchanged", async () => {
@@ -105,9 +100,7 @@ describe("HttpUsersRepository", () => {
       }),
     );
 
-    const repo = new HttpUsersRepository();
-
-    await expect(repo.getUsers()).rejects.toThrow("network down");
+    await expect(fetchUsers()).rejects.toThrow("network down");
   });
 
   it("throws a descriptive HTTP error when the upstream is non-2xx", async () => {
@@ -116,8 +109,6 @@ describe("HttpUsersRepository", () => {
       vi.fn(async () => fetchResponse(503, { error: "down" })),
     );
 
-    const repo = new HttpUsersRepository();
-
-    await expect(repo.getUsers()).rejects.toThrow(/503/);
+    await expect(fetchUsers()).rejects.toThrow(/503/);
   });
 });

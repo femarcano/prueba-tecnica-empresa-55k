@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { User } from "@/repositories/usersRepository";
+import type { User } from "@/apis/usersCache";
 
 interface UsersListsProps {
   tableData: TTable<User>;

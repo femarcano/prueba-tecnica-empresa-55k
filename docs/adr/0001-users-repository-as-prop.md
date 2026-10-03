@@ -1,10 +1,10 @@
-# HttpUsersRepository is module-instantiated; tests stub fetch
+# HttpUsersRepository is gone; fetchUsers is the data source
 
-`HttpUsersRepository` is the production adapter for the users data source. It is instantiated once at module load inside `useGetUsers` (`src/features/UserList/hooks/useGetUsers/index.ts`), and the hook composes a `usersCache` around it. There is no provider, no context, and no second adapter.
+The users data source has no seam. There is one adapter (`HttpUsersRepository` was deleted along with `src/repositories/`), and feature code calls `fetchUsers` (in `src/apis/usersCache/fetchUsers.ts`) directly. Tests stub `globalThis.fetch`.
 
 We rejected:
 
-- **a `RepositoriesProvider` + `useRepositories()` context** — the seam had one binding site and one consumer, and the consumer re-built the `usersCache` on every render. The context added plumbing without making a second adapter easier to test against.
-- **a `FakeUsersRepository` test fixture** — `useGetUsers` tests stub `globalThis.fetch` instead. `usersRepository.test.ts` exercises `HttpUsersRepository` directly. Two adapters had justified a context seam, but with fetch stubbing one adapter is enough.
+- keeping `HttpUsersRepository` as a class wrapping `getRandomUsers` — it added a layer that only delegated. The orval client already produces typed responses and throws on non-2xx via fetch. The wrapper existed only to enforce Zod validation and rethrow with a status-code message; that 5-line contract is now `fetchUsers.ts`.
+- keeping a `UsersRepository` interface for hypothetical future adapters — ADR-0002 notes the "two adapters justify the seam" rule. Without a second adapter, the interface has no implementations and the rule fires in reverse: a hypothetical seam is worse than no seam.
 
-Tests stub `fetch` via `vi.stubGlobal("fetch", ...)` and let `HttpUsersRepository` make its real call, which catches URL and query-string regressions that a fake would not. When the data source joins a second adapter (e.g. an in-memory cache for offline mode), reintroduce the seam at that threshold — not before.
+When a second adapter joins (e.g. an in-memory cache for offline mode, or a server-side backed), reintroduce the interface at that threshold — not before.

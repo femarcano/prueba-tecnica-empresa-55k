@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { HttpUsersRepository } from "@/repositories/usersRepository";
+import { fetchUsers } from "@/apis/usersCache/fetchUsers";
 
 describe("vitest setup smoke test", () => {
   it("runs a basic assertion", () => {
@@ -17,6 +17,6 @@ describe("vitest setup smoke test", () => {
   });
 
   it("resolves the @/ path alias to a real module", () => {
-    expect(typeof HttpUsersRepository).toBe("function");
+    expect(typeof fetchUsers).toBe("function");
   });
 });
