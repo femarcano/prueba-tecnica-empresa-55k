@@ -2,50 +2,101 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, renderHook, waitFor } from "@testing-library/react";
 import { type ReactNode, Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { describe, expect, it, vi } from "vitest";
-
-import { RepositoriesProvider } from "@/contexts/RepositoriesContext";
-import { FakeUsersRepository } from "@/repositories/__fixtures__/fakeUsersRepository";
-import type { UsersRepository } from "@/repositories/usersRepository";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { useGetUsers } from "./index";
 
-function makeWrapper({
-  repository,
-  queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  }),
-}: {
-  repository: UsersRepository;
-  queryClient?: QueryClient;
-}) {
+function user() {
+  return {
+    gender: "male",
+    name: { title: "Mr", first: "Test", last: "User" },
+    location: {
+      street: { number: 1, name: "Main St" },
+      city: "Springfield",
+      state: "IL",
+      country: "US",
+      postcode: 62701,
+      coordinates: { latitude: "0", longitude: "0" },
+      timezone: { offset: "+0:00", description: "UTC" },
+    },
+    email: "test@example.com",
+    login: {
+      uuid: "11111111-1111-4111-8111-111111111111",
+      username: "tester",
+      password: "",
+      salt: "",
+      md5: "",
+      sha1: "",
+      sha256: "",
+    },
+    dob: { date: "1990-01-01T00:00:00.000Z", age: 30 },
+    registered: { date: "2024-01-01T00:00:00.000Z", age: 0 },
+    phone: "",
+    cell: "",
+    id: { name: "SSN", value: null },
+    picture: {
+      large: "https://example.com/large.jpg",
+      medium: "https://example.com/medium.jpg",
+      thumbnail: "https://example.com/thumb.jpg",
+    },
+    nat: "US",
+  };
+}
+
+function payload(users: unknown[]) {
+  return {
+    results: users,
+    info: { seed: "abc", results: users.length, page: 1, version: "1.4" },
+  };
+}
+
+function fetchResponse(status: number, body: unknown) {
+  return {
+    status,
+    text: async () => JSON.stringify(body),
+    headers: new Headers(),
+  };
+}
+
+function makeWrapper({ queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } }) }: { queryClient?: QueryClient } = {}) {
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <RepositoriesProvider value={{ users: repository }}>
-        <Suspense fallback={<p>Loading users…</p>}>{children}</Suspense>
-      </RepositoriesProvider>
+      <Suspense fallback={<p>Loading users…</p>}>{children}</Suspense>
     </QueryClientProvider>
   );
 }
 
 describe("useGetUsers", () => {
-  it("resolves and returns users from the repository", async () => {
-    const repository = new FakeUsersRepository();
-    const { result } = renderHook(() => useGetUsers(), {
-      wrapper: makeWrapper({ repository }),
-    });
-
-    await waitFor(() => {
-      expect(result.current?.users).toHaveLength(3);
-    });
-
-    expect(result.current?.users[0]?.login.uuid).toBe("fake-uuid-1");
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it("throws to a boundary when the repository rejects", async () => {
+  it("resolves and returns users from the upstream", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => fetchResponse(200, payload([user(), { ...user(), email: "two@example.com" }]))),
+    );
+
+    const { result } = renderHook(() => useGetUsers(), { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(result.current?.users).toHaveLength(2);
+    });
+
+    expect(result.current?.users[0]?.email).toBe("test@example.com");
+    expect(result.current?.users[0]?.login.uuid).toBe("11111111-1111-4111-8111-111111111111");
+  });
+
+  it("throws to a boundary when fetch rejects", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("boom");
+      }),
+    );
+
     const capturedError: { current: Error | null } = { current: null };
-    const getUsers = vi.fn<UsersRepository["getUsers"]>().mockRejectedValue(new Error("boom"));
-    const wrapper = makeWrapper({ repository: { getUsers } });
+    const wrapper = makeWrapper();
 
     const Probe = () => {
       useGetUsers();

@@ -1,11 +1,10 @@
-# UsersRepository is delivered through React context, instantiated at the composition root
+# HttpUsersRepository is module-instantiated; tests stub fetch
 
-The users data source sits behind a `UsersRepository` interface, with `HttpUsersRepository` as the production adapter and `FakeUsersRepository` as the in-process fake. `main.tsx` is the composition root that instantiates the adapter; `RepositoriesProvider` delivers it to the tree; `useRepositories()` is the single read site.
+`HttpUsersRepository` is the production adapter for the users data source. It is instantiated once at module load inside `useGetUsers` (`src/features/UserList/hooks/useGetUsers/index.ts`), and the hook composes a `usersCache` around it. There is no provider, no context, and no second adapter.
 
 We rejected:
 
-- a custom hook (`useUsers()`) — would have bundled the data-source seam with the fetch-lifecycle seam (now owned by TanStack Query in a separate decision).
-- a module-level singleton — would have replaced the network-in-view problem with a globally-imported network that tests can't avoid.
-- prop-drilling through `App` — the original draft proposed this, but as the codebase grew past one feature, tree-wide providers compose better than prop chains, and tests of a single feature wrap with `RepositoriesProvider` without mocking the whole composition.
+- **a `RepositoriesProvider` + `useRepositories()` context** — the seam had one binding site and one consumer, and the consumer re-built the `usersCache` on every render. The context added plumbing without making a second adapter easier to test against.
+- **a `FakeUsersRepository` test fixture** — `useGetUsers` tests stub `globalThis.fetch` instead. `usersRepository.test.ts` exercises `HttpUsersRepository` directly. Two adapters had justified a context seam, but with fetch stubbing one adapter is enough.
 
-Two adapters justify the seam at exactly the threshold — provided the Fake is exercised by at least one test, otherwise the seam is hypothetical (per the codebase-design principle that one adapter means a hypothetical seam and two adapters mean a real one).
+Tests stub `fetch` via `vi.stubGlobal("fetch", ...)` and let `HttpUsersRepository` make its real call, which catches URL and query-string regressions that a fake would not. When the data source joins a second adapter (e.g. an in-memory cache for offline mode), reintroduce the seam at that threshold — not before.

@@ -126,23 +126,15 @@ export const UserList = ({ repository }: UserListProps) => {
 
 Completion: rendering `<UserList repository={fakeRepo} />` standalone shows the full UI with empty initial state.
 
-### 6. Wire the composition root in `main.tsx`
+### 6. Wire the adapter in the feature's hook
 
-```tsx
-import { HttpUsersRepository } from "./repositories/usersRepository";
-
-const repository = new HttpUsersRepository();
-
-<App repository={repository} />;
-```
-
-`main.tsx` is the **only** file that names a concrete adapter. Tests render `<App repository={new FakeUsersRepository()} />` instead. The feature folder never references a concrete adapter class.
+The production adapter (`HttpUsersRepository`) is instantiated at module load inside the feature's hook (`src/features/UserList/hooks/useGetUsers/index.ts`). `main.tsx` does not name a concrete adapter. Tests stub `globalThis.fetch` via `vi.stubGlobal` and let the real adapter make its call.
 
 Completion: `pnpm build` passes with zero TS errors.
 
 ## Anti-patterns (caught at review time)
 
-- **`new HttpXxxRepository()` inside a hook.** The singleton pattern. ADR-0001 rejects it.
+- **`new HttpXxxRepository()` re-instantiated on every render.** Module-level singleton or `useMemo` is fine; re-creating it per call is not.
 - **`interface User {}` next to `userSchema`.** Pick one — schema wins.
 - **A `src/types/<feature>.ts` file.** Types belong in the feature's `logics/schema/`.
 - **A `components/` folder inside the feature.** Use `src/components/` for shared UI; put feature-only UI under `presentations/`.

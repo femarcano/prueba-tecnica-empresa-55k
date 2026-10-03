@@ -13,9 +13,9 @@ A module that fetches the list of users. The shape that produces the data, not t
 _Avoid_: UsersService, UsersAPI, UsersClient
 
 **Adapter**:
-A concrete implementation that satisfies a module interface at a seam. In this codebase: `HttpUsersRepository` (production) and `FakeUsersRepository` (test fixture).
+A concrete implementation that satisfies a module interface at a seam. In this codebase: `HttpUsersRepository` (production). Tests stub `globalThis.fetch` rather than substitute a second adapter.
 _Avoid_: Implementation, Provider, Driver
 
 **Fake**:
-A deterministic in-process adapter used for tests. Returns a hardcoded set of users with no network or IO.
+Withdrawn. The codebase no longer keeps a second adapter; tests stub the network seam (`vi.stubGlobal("fetch", ...)`) instead. Reintroduce the term if a second adapter is added at the data-source seam.
 _Avoid_: Mock, Stub
