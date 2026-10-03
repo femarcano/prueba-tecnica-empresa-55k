@@ -4,8 +4,8 @@ The `User` type and the runtime Zod schema are both generated from `openapi.yaml
 
 `openapi.yaml` is the single source of truth. `orval.config.ts` describes the two outputs:
 
-- `src/repositories/__generated__/client/randomuser.ts` — typed `fetch` client.
-- `src/repositories/__generated__/zod/randomuserMe.ts` — Zod 4 schema for runtime validation.
+- `src/apis/__generated__/client/randomuser.ts` — typed `fetch` client.
+- `src/apis/__generated__/zod/randomuserMe.ts` — Zod 4 schema for runtime validation.
 
 `HttpUsersRepository` and `FakeUsersRepository` import `type User` from `./usersRepository`, where it is re-exported as `z.infer<typeof GetRandomUsersResponse.shape.results>[number]`. Consumers in `apis/usersCache` import it from the same module.
 

@@ -1,7 +1,7 @@
 import * as z from "zod";
 
-import { getRandomUsers } from "@/repositories/__generated__/client/randomuser";
-import { GetRandomUsersResponse } from "@/repositories/__generated__/zod/randomuserMe";
+import { getRandomUsers } from "@/apis/__generated__/client/randomuser";
+import { GetRandomUsersResponse } from "@/apis/__generated__/zod/randomuserMe";
 
 export interface UsersRepository {
   getUsers(): Promise<User[]>;
