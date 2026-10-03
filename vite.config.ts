@@ -22,11 +22,4 @@ export default defineConfig({
   resolve: {
     alias: aliases,
   },
-  optimizeDeps: {
-    rolldownOptions: {
-      resolve: {
-        alias: aliases,
-      },
-    },
-  },
 });
