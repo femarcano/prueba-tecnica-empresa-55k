@@ -9,8 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import type { User } from "../../logics";
+import type { User } from "@/repositories/usersRepository";
 
 interface UsersListsProps {
   tableData: TTable<User>;

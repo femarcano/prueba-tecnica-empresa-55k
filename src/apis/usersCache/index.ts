@@ -1,8 +1,7 @@
 import { queryOptions, type QueryClient } from "@tanstack/react-query";
 
 import { GET_USERS_KEY } from "@/apis/keys";
-import type { User } from "@/features/UserList/logics";
-import type { UsersRepository } from "@/repositories/usersRepository";
+import type { User, UsersRepository } from "@/repositories/usersRepository";
 
 export function makeUsersCache(queryClient: QueryClient, repository: UsersRepository) {
   return {

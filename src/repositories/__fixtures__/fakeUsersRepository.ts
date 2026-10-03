@@ -1,6 +1,4 @@
-import type { User } from "@/features/UserList/logics";
-
-import type { UsersRepository } from "../usersRepository";
+import type { User, UsersRepository } from "../usersRepository";
 
 export class FakeUsersRepository implements UsersRepository {
   async getUsers(): Promise<User[]> {
@@ -27,8 +25,8 @@ export class FakeUsersRepository implements UsersRepository {
           sha1: "sha1",
           sha256: "sha256",
         },
-        dob: { date: new Date("1815-12-10"), age: 210 },
-        registered: { date: new Date("2024-01-01"), age: 1 },
+        dob: { date: "1815-12-10T00:00:00.000Z", age: 210 },
+        registered: { date: "2024-01-01T00:00:00.000Z", age: 1 },
         phone: "000-0000",
         cell: "000-0001",
         id: { name: "NINO", value: null },
@@ -61,8 +59,8 @@ export class FakeUsersRepository implements UsersRepository {
           sha1: "sha1",
           sha256: "sha256",
         },
-        dob: { date: new Date("1912-06-23"), age: 113 },
-        registered: { date: new Date("2024-01-01"), age: 1 },
+        dob: { date: "1912-06-23T00:00:00.000Z", age: 113 },
+        registered: { date: "2024-01-01T00:00:00.000Z", age: 1 },
         phone: "000-0002",
         cell: "000-0003",
         id: { name: "NINO", value: null },
@@ -95,8 +93,8 @@ export class FakeUsersRepository implements UsersRepository {
           sha1: "sha1",
           sha256: "sha256",
         },
-        dob: { date: new Date("1867-11-07"), age: 158 },
-        registered: { date: new Date("2024-01-01"), age: 1 },
+        dob: { date: "1867-11-07T00:00:00.000Z", age: 158 },
+        registered: { date: "2024-01-01T00:00:00.000Z", age: 1 },
         phone: "000-0004",
         cell: "000-0005",
         id: { name: "NINO", value: null },

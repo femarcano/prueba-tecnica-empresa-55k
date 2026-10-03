@@ -1,0 +1,229 @@
+openapi: 3.1.0
+info:
+  title: randomuser.me
+  version: "1.0"
+  description: |
+    Hand-authored OpenAPI description of the upstream randomuser.me endpoint
+    we consume. Used by `orval` to generate the typed HTTP client and Zod
+    schema for `HttpUsersRepository`.
+
+    This spec is the only place the upstream response shape is documented.
+    Drift between this file and the real upstream is caught by running
+    `pnpm orval` and reading the diff in the generated output.
+servers:
+  - url: https://randomuser.me
+paths:
+  /api/:
+    get:
+      operationId: getRandomUsers
+      summary: Fetch a deterministic list of random users.
+      parameters:
+        - name: results
+          in: query
+          required: false
+          description: Number of user records to return. We always pass 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5000
+            default: 100
+      responses:
+        "200":
+          description: A page of users.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RandomUsersResponse"
+        default:
+          description: Non-2xx response from the upstream.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RandomUsersResponse"
+components:
+  schemas:
+    RandomUsersResponse:
+      type: object
+      required: [results, info]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        info:
+          type: object
+          required: [seed, results, page, version]
+          properties:
+            seed:
+              type: string
+              example: 56d27df59c825664f
+            results:
+              type: integer
+              example: 100
+            page:
+              type: integer
+              example: 1
+            version:
+              type: string
+              example: "1.4"
+    User:
+      type: object
+      required:
+        - gender
+        - name
+        - location
+        - email
+        - login
+        - dob
+        - registered
+        - phone
+        - cell
+        - id
+        - picture
+        - nat
+      properties:
+        gender:
+          type: string
+          enum: [male, female]
+        name:
+          $ref: "#/components/schemas/Name"
+        location:
+          $ref: "#/components/schemas/Location"
+        email:
+          type: string
+          format: email
+        login:
+          $ref: "#/components/schemas/Login"
+        dob:
+          $ref: "#/components/schemas/DateOfBirth"
+        registered:
+          $ref: "#/components/schemas/DateOfBirth"
+        phone:
+          type: string
+        cell:
+          type: string
+        id:
+          $ref: "#/components/schemas/Id"
+        picture:
+          $ref: "#/components/schemas/Picture"
+        nat:
+          type: string
+    Name:
+      type: object
+      required: [title, first, last]
+      properties:
+        title:
+          type: string
+          enum: [Mr, Mademoiselle, Mrs, Ms, Miss, Madame]
+        first:
+          type: string
+        last:
+          type: string
+    Street:
+      type: object
+      required: [number, name]
+      properties:
+        number:
+          type: integer
+        name:
+          type: string
+    Coordinates:
+      type: object
+      required: [latitude, longitude]
+      properties:
+        latitude:
+          type: string
+        longitude:
+          type: string
+    Timezone:
+      type: object
+      required: [offset, description]
+      properties:
+        offset:
+          type: string
+        description:
+          type: string
+    Location:
+      type: object
+      required:
+        - street
+        - city
+        - state
+        - country
+        - postcode
+        - coordinates
+        - timezone
+      properties:
+        street:
+          $ref: "#/components/schemas/Street"
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          oneOf:
+            - type: integer
+            - type: string
+        coordinates:
+          $ref: "#/components/schemas/Coordinates"
+        timezone:
+          $ref: "#/components/schemas/Timezone"
+    Login:
+      type: object
+      required:
+        - uuid
+        - username
+        - password
+        - salt
+        - md5
+        - sha1
+        - sha256
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        username:
+          type: string
+        password:
+          type: string
+        salt:
+          type: string
+        md5:
+          type: string
+        sha1:
+          type: string
+        sha256:
+          type: string
+    DateOfBirth:
+      type: object
+      required: [date, age]
+      properties:
+        date:
+          type: string
+          format: date-time
+        age:
+          type: integer
+    Id:
+      type: object
+      required: [name, value]
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+          nullable: true
+    Picture:
+      type: object
+      required: [large, medium, thumbnail]
+      properties:
+        large:
+          type: string
+          format: uri
+        medium:
+          type: string
+          format: uri
+        thumbnail:
+          type: string
+          format: uri

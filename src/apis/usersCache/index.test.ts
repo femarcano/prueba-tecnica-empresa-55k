@@ -2,8 +2,7 @@ import { QueryClient, type QueryFunctionContext } from "@tanstack/react-query";
 import { describe, expect, it, vi } from "vitest";
 
 import { GET_USERS_KEY } from "@/apis/keys";
-import type { User } from "@/features/UserList/logics";
-import type { UsersRepository } from "@/repositories/usersRepository";
+import type { User, UsersRepository } from "@/repositories/usersRepository";
 
 import { makeUsersCache } from "./index";
 
@@ -13,8 +12,8 @@ function user(uuid: string): User {
     name: { title: "Ms", first: "Test", last: uuid },
     login: { uuid, username: uuid, password: "", salt: "", md5: "", sha1: "", sha256: "" },
     email: `${uuid}@example.com`,
-    dob: { date: new Date("1990-01-01"), age: 0 },
-    registered: { date: new Date("2024-01-01"), age: 0 },
+    dob: { date: "1990-01-01T00:00:00.000Z", age: 0 },
+    registered: { date: "2024-01-01T00:00:00.000Z", age: 0 },
     phone: "",
     cell: "",
     id: { name: "", value: null },

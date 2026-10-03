@@ -31,7 +31,11 @@ function validUser(overrides: Record<string, unknown> = {}) {
     phone: "",
     cell: "",
     id: { name: "SSN", value: null },
-    picture: { large: "", medium: "", thumbnail: "" },
+    picture: {
+      large: "https://example.com/large.jpg",
+      medium: "https://example.com/medium.jpg",
+      thumbnail: "https://example.com/thumb.jpg",
+    },
     nat: "US",
     ...overrides,
   };
@@ -44,6 +48,14 @@ function payload(users: unknown[]) {
   };
 }
 
+function fetchResponse(status: number, body: unknown) {
+  return {
+    status,
+    text: async () => JSON.stringify(body),
+    headers: new Headers(),
+  };
+}
+
 describe("HttpUsersRepository", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -52,10 +64,7 @@ describe("HttpUsersRepository", () => {
   it("returns parsed User[] when the payload is valid", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => payload([validUser(), validUser({ email: "two@example.com" })]),
-      })),
+      vi.fn(async () => fetchResponse(200, payload([validUser(), validUser({ email: "two@example.com" })]))),
     );
 
     const repo = new HttpUsersRepository();
@@ -63,17 +72,13 @@ describe("HttpUsersRepository", () => {
 
     expect(users).toHaveLength(2);
     expect(users[0].email).toBe("test@example.com");
-    expect(users[0].dob.date).toBeInstanceOf(Date);
-    expect(users[0].dob.date.toISOString()).toBe("1990-01-01T00:00:00.000Z");
+    expect(users[0].dob.date).toBe("1990-01-01T00:00:00.000Z");
   });
 
   it("throws a ZodError when a user field has the wrong shape", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => payload([validUser({ email: 12345 })]),
-      })),
+      vi.fn(async () => fetchResponse(200, payload([validUser({ email: 12345 })]))),
     );
 
     const repo = new HttpUsersRepository();
@@ -84,10 +89,7 @@ describe("HttpUsersRepository", () => {
   it("throws a ZodError when the payload is not an array", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => ({ results: { not: "an array" }, info: {} }),
-      })),
+      vi.fn(async () => fetchResponse(200, { results: { not: "an array" }, info: {} })),
     );
 
     const repo = new HttpUsersRepository();
@@ -111,12 +113,7 @@ describe("HttpUsersRepository", () => {
   it("throws a descriptive HTTP error when the upstream is non-2xx", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: false,
-        status: 503,
-        url: "https://randomuser.me/api/?results=100",
-        json: async () => ({ error: "down" }),
-      })),
+      vi.fn(async () => fetchResponse(503, { error: "down" })),
     );
 
     const repo = new HttpUsersRepository();

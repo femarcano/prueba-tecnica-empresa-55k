@@ -1,8 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import { User } from "../schema";
+import type { User } from "@/repositories/usersRepository";
 
 type Args = {
   onDelete: (uuid: string) => void;

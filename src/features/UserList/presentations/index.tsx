@@ -2,8 +2,8 @@ import type { Table as TanstackTable } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { User } from "@/repositories/usersRepository";
 
-import { User } from "../logics";
 import { UsersList } from "./UsersList";
 
 type UserListPresentation = {

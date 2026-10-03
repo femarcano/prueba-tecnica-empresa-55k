@@ -1,21 +1,20 @@
-import { userSchema, type User } from "@/features/UserList/logics";
+import * as z from "zod";
+
+import { getRandomUsers } from "@/repositories/__generated__/client/randomuser";
+import { GetRandomUsersResponse } from "@/repositories/__generated__/zod/randomuserMe";
 
 export interface UsersRepository {
   getUsers(): Promise<User[]>;
 }
 
-interface RandomUserApiResponse {
-  results: unknown;
-  info: unknown;
-}
+export type User = z.infer<typeof GetRandomUsersResponse>["results"][number];
 
 export class HttpUsersRepository implements UsersRepository {
   async getUsers(): Promise<User[]> {
-    const res = await fetch("https://randomuser.me/api/?results=100");
-    if (!res.ok) {
-      throw new Error(`randomuser.me API returned ${res.status} for ${res.url}`);
+    const response = await getRandomUsers({ results: 100 });
+    if (response.status !== 200) {
+      throw new Error(`randomuser.me API returned ${response.status}`);
     }
-    const json = (await res.json()) as RandomUserApiResponse;
-    return userSchema.array().parse(json.results);
+    return GetRandomUsersResponse.parse(response.data).results;
   }
 }
