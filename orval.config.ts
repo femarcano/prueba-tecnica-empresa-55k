@@ -9,8 +9,8 @@ export default defineConfig({
       mode: "split",
       client: "fetch",
       httpClient: "fetch",
-      target: "./src/repositories/__generated__/client/randomuser.ts",
-      schemas: "./src/repositories/__generated__/client/schemas",
+      target: "./src/apis/__generated__/client/randomuser.ts",
+      schemas: "./src/apis/__generated__/client/schemas",
       clean: true,
       baseUrl: "https://randomuser.me",
       mock: false,
@@ -23,11 +23,11 @@ export default defineConfig({
     output: {
       mode: "single",
       client: "zod",
-      target: "./src/repositories/__generated__/zod",
+      target: "./src/apis/__generated__/zod",
       clean: true,
       override: {
         zod: {
-          variant: "regular",
+          variant: "classic",
           version: "auto",
         },
       },
