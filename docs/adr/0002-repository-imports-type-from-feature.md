@@ -1,3 +1,9 @@
-# Repository imports User type from the feature, not from a shared types/ module
+# Randomuser contract is owned by `openapi.yaml`, materialized by orval
 
-`HttpUsersRepository` and `FakeUsersRepository` import the `User` type from `src/features/UserList/logics` rather than from `src/types/user.ts`. The feature owns the schema (Zod is the source of truth; types are inferred via `z.infer`), and the repository depends on the feature because the feature defines the contract. We considered moving the schema up to `src/types/user.ts` to avoid the layering inversion, but rejected it: the UserList feature is the only consumer of the User shape today, and lifting it would create a shared types module that pretends to be domain-neutral while actually being driven by one feature. Lift the schema only when a second feature needs the same type.
+The upstream randomuser.me API is described in `openapi.yaml` at the repo root. The spec is the single source of truth; `orval` produces both the typed `fetch` client (`src/apis/__generated__/client/randomuser.ts`) and the runtime Zod schema (`src/apis/__generated__/zod/randomuserMe.ts`) from it. Hand-written code never defines the randomuser payload shape — it consumes the generated artifacts.
+
+`orval.config.ts` describes the two outputs. Generated files are gitignored (see `chore/orval-tooling`); regenerate them with `pnpm orval`.
+
+The OpenAPI spec lives at the repo root rather than next to a feature because it describes an external service, not our application code.
+
+> The original version of this ADR argued the *UserList feature* should own the schema and the repository should depend on the feature. With codegen, the contract is owned by the OpenAPI document and any consumer depends on the generated surface instead. The "lift only when a second feature needs the type" guard becomes "lift only when the contract grows beyond randomuser".
