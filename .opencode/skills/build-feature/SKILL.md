@@ -64,33 +64,27 @@ Completion: every noun the feature exposes has a `<noun>Schema` and a derived `<
 A hook wraps Query, mutations, refs, and any state that survives across renders. Pure derivations (filter, sort) stay in `presentations/`.
 
 ```ts
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { UsersRepository } from "../../../repositories/usersRepository";
-import type { User } from "../logics";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useGetUsers = (repository: UsersRepository) => {
+import { makeUsersCache, type User } from "@/apis/usersCache";
+
+export const useGetUsers = () => {
   const queryClient = useQueryClient();
-  const {
-    data: users = null,
-    isLoading,
-    error,
-  } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: () => repository.getUsers(),
-  });
-  // mutations go through queryClient.setQueryData, not local useState
-  return { users, isLoading, error /* actions */ };
+  const cache = makeUsersCache(queryClient);
+  const { data: users } = useSuspenseQuery(cache.query());
+  // mutations go through cache.remove / cache.reset, not local useState
+  return { users /* actions */ };
 };
 ```
 
 **Rules**
 
 - One public hook per feature (`useUserList`). Sub-hooks go in their own folders (`hooks/useGetUsers/`).
-- **Accept repositories as parameters.** Never `new HttpUsersRepository()` inside a hook — that's the singleton pattern ADR-0001 explicitly rejected. The composition root in `main.tsx` instantiates the adapter.
+- **No data-source seams unless a second adapter exists.** Until there is one, the hook calls `fetchUsers` directly (see ADR-0001).
 - Mutations use `queryClient.setQueryData` or `useMutation`. Local `useState` is for view state only.
 - The public hook returns a single object — typically `{ state, actions }` — so the composition entry destructures once.
 
-Completion: no `import { HttpXxxRepository }` from inside any hook file; every hook that talks to data takes its adapter as a parameter.
+Completion: no `import { HttpXxxRepository }` anywhere; every hook that talks to data imports `fetchUsers` or makes a Query call against `makeUsersCache`.
 
 ### 4. Presentation is pure, receives everything via props
 
@@ -107,24 +101,19 @@ Completion: removing every `useState`/`useMemo`/`useRef` call from the presentat
 
 ### 5. Composition entry in `index.tsx`
 
-`index.tsx` is the **only file that knows about every role**. It wires the public hook (stateful) into the presentation (view) and accepts the repository from `App`.
+`index.tsx` is the **only file that knows about every role**. It wires the public hook (stateful) into the presentation (view). There is no `repository` prop — the hook pulls data on its own.
 
 ```tsx
 import { useUserList } from "./hooks";
 import { UserListPresentation } from "./presentations";
-import type { UsersRepository } from "../../repositories/usersRepository";
 
-interface UserListProps {
-  repository: UsersRepository;
-}
-
-export const UserList = ({ repository }: UserListProps) => {
-  const { state, actions } = useUserList(repository);
+export const UserList = () => {
+  const { state, actions } = useUserList();
   return <UserListPresentation {...state} {...actions} />;
 };
 ```
 
-Completion: rendering `<UserList repository={fakeRepo} />` standalone shows the full UI with empty initial state.
+Completion: rendering `<UserList />` standalone shows the full UI with empty initial state.
 
 ### 6. The feature hook calls `fetchUsers` directly
 

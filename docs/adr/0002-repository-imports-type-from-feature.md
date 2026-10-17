@@ -1,9 +1,18 @@
-# Randomuser contract is owned by `openapi.yaml`, materialized by orval
+# User contract is owned by openapi.yaml, materialized by orval
 
-The upstream randomuser.me API is described in `openapi.yaml` at the repo root. The spec is the single source of truth; `orval` produces both the typed `fetch` client (`src/apis/__generated__/client/randomuser.ts`) and the runtime Zod schema (`src/apis/__generated__/zod/randomuserMe.ts`) from it. Hand-written code never defines the randomuser payload shape — it consumes the generated artifacts.
+The `User` type and the runtime Zod schema are both generated from `openapi.yaml` via `pnpm orval`. Hand-written code never defines the User shape.
 
-`orval.config.ts` describes the two outputs. Generated files are gitignored (see `chore/orval-tooling`); regenerate them with `pnpm orval`.
+`openapi.yaml` is the single source of truth. `orval.config.ts` describes the two outputs:
 
-The OpenAPI spec lives at the repo root rather than next to a feature because it describes an external service, not our application code.
+- `src/apis/__generated__/client/randomuser.ts` — typed `fetch` client.
+- `src/apis/__generated__/zod/randomuserMe.ts` — Zod 4 schema for runtime validation.
 
-> The original version of this ADR argued the *UserList feature* should own the schema and the repository should depend on the feature. With codegen, the contract is owned by the OpenAPI document and any consumer depends on the generated surface instead. The "lift only when a second feature needs the type" guard becomes "lift only when the contract grows beyond randomuser".
+`type User` is derived from the generated Zod schema in `src/apis/usersCache/fetchUsers.ts`:
+
+```ts
+export type User = z.infer<typeof GetRandomUsersResponse>["results"][number];
+```
+
+`fetchUsers` calls the orval client and Zod-parses the response. It is the only consumer of the generated artifacts. Feature code (`useGetUsers`, table headers, presentations) imports `User` from `@/apis/usersCache`.
+
+The OpenAPI spec lives at the repo root (`openapi.yaml`) rather than next to a feature because it describes an external service, not our application code.
