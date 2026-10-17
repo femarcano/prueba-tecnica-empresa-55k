@@ -1,12 +1,11 @@
+import { useMemo } from "react";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 
 import { makeUsersCache } from "@/apis/usersCache";
-import { useRepositories } from "@/contexts/RepositoriesContext";
 
 export const useGetUsers = () => {
   const queryClient = useQueryClient();
-  const { users: usersRepository } = useRepositories();
-  const cache = makeUsersCache(queryClient, usersRepository);
+  const cache = useMemo(() => makeUsersCache(queryClient), [queryClient]);
 
   const { data: users } = useSuspenseQuery(cache.query());
 
