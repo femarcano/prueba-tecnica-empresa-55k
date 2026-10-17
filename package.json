@@ -11,7 +11,8 @@
     "format:check": "oxfmt --check",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "orval": "orval --config ./orval.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -31,17 +32,19 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@orval/zod": "^8.39.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^6.1.1",
     "globals": "^17.13.0",
-    "shadcn": "^4.21.1",
     "happy-dom": "^20.14.5",
+    "orval": "^8.39.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.86.0",
     "path": "^0.12.7",
+    "shadcn": "^4.21.1",
     "typescript": "^7.0.2",
     "url": "^0.11.4",
     "vite": "^8.3.2",
