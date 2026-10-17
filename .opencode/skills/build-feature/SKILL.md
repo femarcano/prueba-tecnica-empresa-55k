@@ -126,17 +126,18 @@ export const UserList = ({ repository }: UserListProps) => {
 
 Completion: rendering `<UserList repository={fakeRepo} />` standalone shows the full UI with empty initial state.
 
-### 6. Wire the composition root in `main.tsx`
+### 6. The feature hook calls `fetchUsers` directly
 
-```tsx
-import { HttpUsersRepository } from "./repositories/usersRepository";
+The data source is `fetchUsers` at `src/apis/usersCache/fetchUsers.ts` (see ADR-0001 and ADR-0002). The feature hook imports it and feeds the result to `useSuspenseQuery`. There is no adapter class, no repository interface, no composition root — until a second adapter joins the seam, none of them exist.
 
-const repository = new HttpUsersRepository();
+Tests stub the network at the boundary: `vi.stubGlobal("fetch", …)` (or `vi.spyOn(getRandomUsers, …)` for the orval client). The real `fetchUsers` runs in the test environment; only its network input is replaced.
 
-<App repository={repository} />;
+```ts
+import { fetchUsers } from "@/apis/usersCache";
+
+const cache = makeUsersCache(queryClient);
+const { data } = useSuspenseQuery(cache.query());
 ```
-
-`main.tsx` is the **only** file that names a concrete adapter. Tests render `<App repository={new FakeUsersRepository()} />` instead. The feature folder never references a concrete adapter class.
 
 Completion: `pnpm build` passes with zero TS errors.
 
