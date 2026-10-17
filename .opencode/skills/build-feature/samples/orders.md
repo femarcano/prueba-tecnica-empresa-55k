@@ -69,6 +69,7 @@ Stateful concern — talks to the data source. Accepts the repository as a param
 
 ```ts
 import { useQuery } from "@tanstack/react-query";
+
 import type { OrdersRepository } from "../../../../repositories/ordersRepository";
 import type { Order } from "../../logics";
 
@@ -96,8 +97,8 @@ What this file does NOT do:
 The public hook composes the sub-hooks. No sub-hooks here yet, but the structure is in place for when one appears.
 
 ```ts
-import { useGetOrders } from "./useGetOrders";
 import type { OrdersRepository } from "../../../repositories/ordersRepository";
+import { useGetOrders } from "./useGetOrders";
 
 export const useOrders = (repository: OrdersRepository) => {
   const { orders, isLoading, error } = useGetOrders(repository);
@@ -154,8 +155,8 @@ export const OrdersList = ({ orders, onDelete }: OrdersListProps) => {
 The main view. Receives everything via props. Reads nothing from Query or repositories.
 
 ```tsx
-import { OrdersList } from "./OrdersList";
 import type { Order } from "../logics";
+import { OrdersList } from "./OrdersList";
 
 interface OrdersViewProps {
   orders: Order[] | null;
@@ -183,9 +184,9 @@ Three explicit branches (`isLoading`, `error`, ready). No collapse into one tern
 The only file that knows about every role. Wires the public hook into the presentation.
 
 ```tsx
+import type { OrdersRepository } from "../../repositories/ordersRepository";
 import { useOrders } from "./hooks";
 import { OrdersView } from "./presentations";
-import type { OrdersRepository } from "../../repositories/ordersRepository";
 
 interface OrdersProps {
   repository: OrdersRepository;

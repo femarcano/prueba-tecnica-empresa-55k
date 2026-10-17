@@ -58,7 +58,9 @@ function fetchResponse(status: number, body: unknown) {
   };
 }
 
-function makeWrapper({ queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } }) }: { queryClient?: QueryClient } = {}) {
+function makeWrapper({
+  queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+}: { queryClient?: QueryClient } = {}) {
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={<p>Loading users…</p>}>{children}</Suspense>
@@ -74,7 +76,9 @@ describe("useGetUsers", () => {
   it("resolves and returns users from the upstream", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => fetchResponse(200, payload([user(), { ...user(), email: "two@example.com" }]))),
+      vi.fn(async () =>
+        fetchResponse(200, payload([user(), { ...user(), email: "two@example.com" }])),
+      ),
     );
 
     const { result } = renderHook(() => useGetUsers(), { wrapper: makeWrapper() });
