@@ -64,7 +64,9 @@ describe("fetchUsers", () => {
   it("returns parsed User[] when the payload is valid", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => fetchResponse(200, payload([validUser(), validUser({ email: "two@example.com" })]))),
+      vi.fn(async () =>
+        fetchResponse(200, payload([validUser(), validUser({ email: "two@example.com" })])),
+      ),
     );
 
     const users = await fetchUsers();

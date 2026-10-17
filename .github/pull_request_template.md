@@ -11,6 +11,7 @@ For more information about how to contribute to this repo, visit this [page](htt
 ## Steps to Reproduce Bug and Validate Solution
 
 ---
+
 > Only applicable if the work is to address a bug. Please remove this section if the work is for a feature or story
 > Provide details on the environment the bug is found, and detailed steps to recreate the bug.
 > This should be detailed enough for a team member to confirm that the bug no longer occurs
@@ -19,7 +20,7 @@ For more information about how to contribute to this repo, visit this [page](htt
 
 ---
 
-> Use the check-list below to ensure your branch is ready for PR.  If the item is not applicable, leave it blank.
+> Use the check-list below to ensure your branch is ready for PR. If the item is not applicable, leave it blank.
 
 - [ ] I have updated the documentation accordingly.
 - [ ] I have added tests to cover my changes.

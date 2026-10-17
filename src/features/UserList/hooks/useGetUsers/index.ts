@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 import { makeUsersCache } from "@/apis/usersCache";
 
