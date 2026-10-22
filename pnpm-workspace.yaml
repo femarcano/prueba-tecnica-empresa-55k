@@ -1,4 +1,8 @@
 allowBuilds:
   "@swc/core": true
   esbuild: true
-minimumReleaseAge: 1440
+minimumReleaseAge: 4320
+# Fail installs that would rewrite the lockfile, so 'pnpm install' can never
+# silently resolve to something other than what is committed. CI already
+# defaults this to true; setting it explicitly covers local installs too.
+frozenLockfile: true
