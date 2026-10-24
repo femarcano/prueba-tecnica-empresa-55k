@@ -91,7 +91,17 @@ components:
           $ref: "#/components/schemas/Location"
         email:
           type: string
-          format: email
+          # Deliberately NOT `format: email`. The upstream builds the
+          # address as "<first>.<last>@example.com" without sanitising
+          # the name, so a name that itself ends in a dot (e.g. "Hans-J.")
+          # yields a malformed address like "hans-j..schaub@example.com".
+          # That happens for roughly 1 in 3000 users and a strict email
+          # format would reject the entire payload, blanking the table.
+          #
+          # Leaving `format` unset makes orval emit a plain zod.string().
+          # The field is only ever rendered as text, so validating the
+          # upstream's quirks buys nothing and costs availability.
+          #
         login:
           $ref: "#/components/schemas/Login"
         dob:
@@ -114,7 +124,11 @@ components:
       properties:
         title:
           type: string
-          enum: [Mr, Mademoiselle, Mrs, Ms, Miss, Madame]
+          # The upstream emits a distinct title per locale. This list was
+          # missing "Monsieur", which the API returns for French-speaking
+          # users (nat=CH, and others). Its absence made the strict enum
+          # reject ~2% of payloads, which failed the whole list load.
+          enum: [Mr, Mademoiselle, Monsieur, Mrs, Ms, Miss, Madame]
         first:
           type: string
         last:

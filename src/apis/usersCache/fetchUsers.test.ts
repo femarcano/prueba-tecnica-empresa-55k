@@ -113,4 +113,71 @@ describe("fetchUsers", () => {
 
     await expect(fetchUsers()).rejects.toThrow(/503/);
   });
+
+  // Regression: the upstream emits a distinct name.title per locale. The
+  // enum in openapi.yaml used to omit "Monsieur", which the API returns
+  // for French-speaking users. One such user in a payload of 100 made
+  // the whole parse throw, so the table rendered nothing at all.
+  it.each(["Mr", "Mademoiselle", "Monsieur", "Mrs", "Ms", "Miss", "Madame"])(
+    "accepts the %s title",
+    async (title) => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () =>
+          fetchResponse(
+            200,
+            payload([validUser({ name: { title, first: "Test", last: "User" } })]),
+          ),
+        ),
+      );
+
+      const users = await fetchUsers();
+
+      expect(users).toHaveLength(1);
+      expect(users[0].name.title).toBe(title);
+    },
+  );
+
+  it("accepts a payload where one user has the Monsieur title", async () => {
+    const users = Array.from({ length: 100 }, (_, i) =>
+      validUser({
+        name: { title: i === 37 ? "Monsieur" : "Mr", first: "Test", last: "User" },
+      }),
+    );
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => fetchResponse(200, payload(users))),
+    );
+
+    const result = await fetchUsers();
+
+    expect(result).toHaveLength(100);
+    expect(result[37].name.title).toBe("Monsieur");
+  });
+
+  // Regression: the upstream builds the address as "<first>.<last>@..."
+  // without sanitising the name, so a name ending in a dot produces a
+  // malformed address. This shows up roughly once per 3000 users and
+  // used to fail the whole payload.
+  it("accepts the malformed email the upstream produces for a name ending in a dot", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        fetchResponse(
+          200,
+          payload([
+            validUser({
+              name: { title: "Mr", first: "Hans-J.", last: "Schaub" },
+              email: "hans-j..schaub@example.com",
+            }),
+          ]),
+        ),
+      ),
+    );
+
+    const users = await fetchUsers();
+
+    expect(users).toHaveLength(1);
+    expect(users[0].email).toBe("hans-j..schaub@example.com");
+  });
 });
