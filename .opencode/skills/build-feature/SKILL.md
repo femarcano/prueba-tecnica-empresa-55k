@@ -1,3 +1,8 @@
+---
+name: build-feature
+description: Scaffold a new feature folder under `src/features/<name>/` that follows the same role layout as `src/features/UserList/`. One skill, one job: keep every feature folder shaped the same way so the next reader (human or agent) finds `logics/schema/`, `hooks/`, `presentations/`, and `index.tsx` where they expect them.
+---
+
 # build-feature
 
 Scaffold a new feature folder under `src/features/<name>/` that follows the same role layout as `src/features/UserList/`. One skill, one job: keep every feature folder shaped the same way so the next reader (human or agent) finds `logics/schema/`, `hooks/`, `presentations/`, and `index.tsx` where they expect them.
