@@ -4,6 +4,7 @@ import type { User } from "@/apis/usersCache";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { userListTableFeatures } from "../logics/features";
 import { UsersList } from "./UsersList";
 
 type UserListPresentation = {
@@ -14,7 +15,7 @@ type UserListPresentation = {
   toggleSortByCountry: () => void;
   setFilterCountry: (country: string) => void;
   filterCountry: string | null;
-  tableData: TanstackTable<User>;
+  tableData: TanstackTable<typeof userListTableFeatures, User>;
 };
 
 export const UserListPresentation: React.FC<UserListPresentation> = ({

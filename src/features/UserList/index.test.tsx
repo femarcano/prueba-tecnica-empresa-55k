@@ -157,6 +157,23 @@ describe("UserList", () => {
     expect(screen.getByText("carol@example.com")).toBeTruthy();
   });
 
+  it("spans the empty state across every column of the table", async () => {
+    stubUpstream([]);
+
+    render(<UserList />, { wrapper: makeWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("No results.")).toBeTruthy();
+    });
+
+    // The empty state is one cell that has to span the whole width of the table.
+    const columnCount = screen.getAllByRole("columnheader").length;
+    expect(columnCount).toBe(8);
+    expect(screen.getByText("No results.").closest("td")?.getAttribute("colspan")).toBe(
+      String(columnCount),
+    );
+  });
+
   it("narrows the rows to the users of the filtered country", async () => {
     stubUpstream([alice, bob, carol]);
 

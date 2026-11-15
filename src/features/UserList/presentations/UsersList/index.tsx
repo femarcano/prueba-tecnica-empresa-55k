@@ -11,8 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { userListTableFeatures } from "../../logics/features";
+
 interface UsersListsProps {
-  tableData: TTable<User>;
+  tableData: TTable<typeof userListTableFeatures, User>;
 }
 
 export const UsersList: React.FC<UsersListsProps> = ({ tableData }) => {
@@ -40,8 +42,8 @@ export const UsersList: React.FC<UsersListsProps> = ({ tableData }) => {
           {tableData.getRowModel().rows?.length ? (
             tableData.getRowModel().rows.map((row) => {
               return (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
+                <TableRow key={row.id}>
+                  {row.getAllCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -51,7 +53,10 @@ export const UsersList: React.FC<UsersListsProps> = ({ tableData }) => {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={tableData.getColumn.length} className="h-24 text-center">
+              <TableCell
+                colSpan={tableData.getAllLeafColumns().length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>

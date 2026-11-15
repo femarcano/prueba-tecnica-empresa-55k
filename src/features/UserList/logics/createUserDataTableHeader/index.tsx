@@ -1,13 +1,15 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 
 import type { User } from "@/apis/usersCache";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { userListTableFeatures } from "../features";
 
 type Args = {
   onDelete: (uuid: string) => void;
 };
 
-type IUserDataTableColumns = (args: Args) => ColumnDef<User>[];
+type IUserDataTableColumns = (args: Args) => ColumnDef<typeof userListTableFeatures, User>[];
 
 export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) => {
   return [
