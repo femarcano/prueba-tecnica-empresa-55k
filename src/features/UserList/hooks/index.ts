@@ -5,6 +5,8 @@ import { createUserDataTableColumns } from "../logics";
 import { useGetUsers } from "./useGetUsers";
 
 export const useUserList = () => {
+  "use no memo";
+
   const { users, onDelete, onReset } = useGetUsers();
 
   const [showColors, setShowColors] = useState(false);
@@ -27,6 +29,11 @@ export const useUserList = () => {
       : filteredUsers;
   }, [filteredUsers, sortByCountry]);
 
+  // TanStack Table v8's `useReactTable` returns a table with interior mutability: the object
+  // keeps its reference while its contents change. Memoizing it would freeze the UI, so this
+  // hook opts out of compilation with "use no memo" above. The rule that reports it is
+  // suppressed on the line that calls it, because the opt-out is already declared.
+  // oxlint-disable-next-line react/incompatible-library
   const tableData = useReactTable({
     columns: createUserDataTableColumns({ onDelete }),
     data: sortedUsers,
