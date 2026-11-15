@@ -6,3 +6,13 @@ minimumReleaseAge: 4320
 # silently resolve to something other than what is committed. CI already
 # defaults this to true; setting it explicitly covers local installs too.
 frozenLockfile: true
+# Pin the transitive dependencies that carry advisories to their patched
+# versions, when the package that pulls them in has not shipped a release
+# that carries the fix yet. Each range stays within the major version the
+# dependent asks for.
+overrides:
+  fast-uri: ^3.1.9
+  ip-address: ^10.7.4
+  minimatch: ^11.0.1
+  qs: ^6.16.1
+  systeminformation: ^5.33.16
