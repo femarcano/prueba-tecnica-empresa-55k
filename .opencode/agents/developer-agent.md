@@ -30,6 +30,16 @@ Implement a new feature of this repository from a description of what it should 
   | The data-source decision, when the feature reads data | `docs/adr/0001-users-repository-as-prop.md` |
   | The API contract decision, when the feature calls the upstream API | `docs/adr/0002-repository-imports-type-from-feature.md` |
 
+- **Read the skill for the role you are writing.** Each role has its own skill, with the rules and the anti-patterns of that role. Read the one that matches the file you are about to write — not all five.
+
+  | The file you are writing | The skill to read |
+  |---|---|
+  | `src/features/<Name>/index.tsx` | `feature-container` |
+  | `src/features/<Name>/hooks/**` | `feature-hook` |
+  | Calling the API layer from a hook | `feature-api-hook` |
+  | `src/features/<Name>/logics/**` | `feature-logics` |
+  | `src/features/<Name>/presentations/**` | `feature-presentation` |
+
 - **Follow `build-feature`.** It defines the role tree, that Zod is the single source of truth for domain types, that the hooks own the stateful behaviour, that the presentation is pure, and that `index.tsx` is the only file that knows every role. Use its anti-pattern list as a checklist before reporting completion.
 - **Name the feature after its domain term.** The folder is `src/features/<Name>/` in camelCase, a singular noun matching the domain vocabulary in `CONTEXT.md` (pluralise only when the domain already uses the plural).
 - **Call the data source directly.** `fetchUsers` in `src/apis/usersCache/fetchUsers.ts` is the single data-source function. There is no repository interface and no adapter around it until a second adapter exists (ADR-0001). Do not introduce a repository, a service, or a provider for a hypothetical second implementation.
