@@ -19,13 +19,25 @@ Planned, not written. Each would get its own agent file in `.opencode/agents/`.
 
 ## Known gaps
 
-### The skills the developer agent still needs
+### The skills the developer agent reads
 
-`developer-agent` is deliberately thin. It points at `.opencode/skills/build-feature/SKILL.md` for the feature role tree and at `CONTEXT.md` and the two ADRs for the conventions, and that is the whole of its specification. The agent will stumble on the parts no existing skill covers yet. The skills below are the known missing ones — **written incrementally, as the agent's actual failures show which one is needed first**, rather than all at once:
+`developer-agent` is deliberately thin. It points at the conventions rather than restating them, and the conventions live in skills — one per role, plus the scaffolder that ties them together:
 
-- **Feature testing** — how to write the Vitest test for a feature in this repository: where the test file goes (next to the target, `*.test.ts(x)`), how the network is stubbed (`vi.stubGlobal("fetch", …)` at the boundary, per `CONTEXT.md`'s `Fake` entry), the Japanese test-name convention, and the fact that `vitest.setup.ts` is not a file in this repository the way the upstream configuration assumed.
-- **Feature presentation** — how a view is written here: Tailwind v4 rather than SCSS, the shadcn primitives in `src/components/ui/` (so the upstream rule "use `Stack` instead of `display: flex`" and the SCSS token rules do not apply), and the `cn` helper.
-- **Feature schemas** — the Zod v4 patterns this repository uses, as distinct from the general Zod guidance.
+| Skill                  | Covers                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `build-feature`        | The role tree and the steps to scaffold a feature. Points at the role skills.     |
+| `feature-container`    | `src/features/<Name>/index.tsx` — the composition entry.                          |
+| `feature-hook`         | `src/features/<Name>/hooks/**` — the stateful half.                               |
+| `feature-api-hook`     | How a hook imports and calls `src/apis/usersCache/`.                              |
+| `feature-logics`       | `src/features/<Name>/logics/**` — converters, generators, schemas, shared values. |
+| `feature-presentation` | `src/features/<Name>/presentations/**` — the view.                                |
+
+The agent reads the skill for the role it is about to write, not all of them.
+
+Two gaps remain, and neither is a skill yet:
+
+- **Feature testing** — how to write the Vitest test for a feature in this repository: where the test file goes (next to the target, `*.test.ts(x)`), how the network is stubbed (`vi.stubGlobal("fetch", …)` at the boundary, per `CONTEXT.md`'s `Fake` entry), the test-name convention, and the fact that this repository's Vitest configuration has no global cleanup, so a view-level test has to call `cleanup()` itself.
+- **A skill for `src/components/ui/`** — how a shared shadcn primitive is added to this repository, as distinct from the upstream configuration's SCSS-based `ui/` rules, which do not apply here.
 
 ### Two lineages of agent configuration
 

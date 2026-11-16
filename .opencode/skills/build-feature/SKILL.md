@@ -11,6 +11,20 @@ Scaffold a new feature folder under `src/features/<name>/` that follows the same
 
 You are about to build a new feature for this React + TypeScript + TanStack Query app and need a folder. Run this skill before writing a single file. **Don't** read the existing `UserList/` for "inspiration" — read it to confirm the convention; copy the structure, then write fresh code for your feature's domain.
 
+## The role skills
+
+This skill is the **scaffolder**. It lays out the folder and says which role each piece is. Once you know which file you are about to write, read that role's skill — it holds the rules and the anti-patterns of that role.
+
+| The file you are writing | The skill to read |
+|---|---|
+| `src/features/<Name>/index.tsx` — the composition entry | `feature-container` |
+| `src/features/<Name>/hooks/**` — the stateful half | `feature-hook` |
+| Calling the API layer from a hook | `feature-api-hook` |
+| `src/features/<Name>/logics/**` — the pure half | `feature-logics` |
+| `src/features/<Name>/presentations/**` — the view | `feature-presentation` |
+
+The steps below summarise each role. The role skill is the authority on it.
+
 ## Steps
 
 ### 1. Scaffold the role tree
