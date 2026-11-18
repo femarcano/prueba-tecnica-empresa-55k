@@ -7,15 +7,30 @@ Raw notes on this repository as it actually is. `CONTEXT.md` holds the domain gl
 | Agent             | Owns                                                            | Defined in                            |
 | ----------------- | --------------------------------------------------------------- | ------------------------------------- |
 | `developer-agent` | New features — production code only, no tests, no PR, no commit | `.opencode/agents/developer-agent.md` |
+| `test-agent`      | The tests of a change, written before the change                | `.opencode/agents/test-agent.md`      |
 
-That is the whole roster on this branch. `developer-agent` is a subagent: the main agent dispatches it with a description of a feature.
+Both are subagents: the main agent dispatches them.
+
+### How the two fit together
+
+The `test-agent` writes the tests first and hands them over with `it.skip`; the `developer-agent` implements the code and removes the skips.
+
+```text
+main agent
+  ├─ test-agent       writes the tests of the specified behaviour
+  │                    └─ hands over: "these files carry it.skip"
+  └─ developer-agent  implements the code, removes the skips, makes them pass
+```
+
+The separation is the point. An agent that writes the code and the tests together tends to write the test that matches the code it just wrote. The `test-agent` has to decide what the behaviour should be from the description, before it knows how the code will be shaped.
+
+The `test-agent` also handles refactorings, migrations and library updates — the cases where the tests must pass _before_ the change, because the change is supposed to be invisible.
 
 ### Agents that do not exist yet
 
 Planned, not written. Each would get its own agent file in `.opencode/agents/`.
 
 - A **pull-request agent** — commits the branch, opens the PR. `developer-agent` deliberately stops at the working tree so the human stays in control of what gets pushed.
-- A **test agent** — writes the tests for a new feature. `developer-agent` writes production code only and must not author or edit tests to make a check pass.
 
 ## Known gaps
 
@@ -23,21 +38,27 @@ Planned, not written. Each would get its own agent file in `.opencode/agents/`.
 
 `developer-agent` is deliberately thin. It points at the conventions rather than restating them, and the conventions live in skills — one per role, plus the scaffolder that ties them together:
 
-| Skill                  | Covers                                                                            |
-| ---------------------- | --------------------------------------------------------------------------------- |
-| `build-feature`        | The role tree and the steps to scaffold a feature. Points at the role skills.     |
-| `feature-container`    | `src/features/<Name>/index.tsx` — the composition entry.                          |
-| `feature-hook`         | `src/features/<Name>/hooks/**` — the stateful half.                               |
-| `feature-api-hook`     | How a hook imports and calls `src/apis/usersCache/`.                              |
-| `feature-logics`       | `src/features/<Name>/logics/**` — converters, generators, schemas, shared values. |
-| `feature-presentation` | `src/features/<Name>/presentations/**` — the view.                                |
+| Skill                  | Covers                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `build-feature`        | The role tree and the steps to scaffold a feature. Points at the role skills.                           |
+| `feature-container`    | `src/features/<Name>/index.tsx` — the composition entry.                                                |
+| `feature-hook`         | `src/features/<Name>/hooks/**` — the stateful half.                                                     |
+| `feature-api-hook`     | How a hook imports and calls `src/apis/usersCache/`.                                                    |
+| `feature-logics`       | `src/features/<Name>/logics/**` — converters, generators, schemas, shared values.                       |
+| `feature-presentation` | `src/features/<Name>/presentations/**` — the view.                                                      |
+| `feature-testing`      | How to write a test in this repository — placement, stubbing, queries, and which layer owns which test. |
 
-The agent reads the skill for the role it is about to write, not all of them.
+The agents read the skill for the role they are about to write, not all of them.
 
-Two gaps remain, and neither is a skill yet:
+One gap remains, and it is not a skill yet:
 
-- **Feature testing** — how to write the Vitest test for a feature in this repository: where the test file goes (next to the target, `*.test.ts(x)`), how the network is stubbed (`vi.stubGlobal("fetch", …)` at the boundary, per `CONTEXT.md`'s `Fake` entry), the test-name convention, and the fact that this repository's Vitest configuration has no global cleanup, so a view-level test has to call `cleanup()` itself.
 - **A skill for `src/components/ui/`** — how a shared shadcn primitive is added to this repository, as distinct from the upstream configuration's SCSS-based `ui/` rules, which do not apply here.
+
+### The rules
+
+`.opencode/rules/pr-creation-constraints.md` holds how a pull request is made in this repository: the `pr` skill writes the body, one concern per pull request, the four checks before the PR is opened, and the branch and commit conventions. It is loaded through the `instructions` array in `opencode.json`.
+
+There is no `.github/pull_request_template.md` convention here — that file is inherited from another repository and its headings do not apply. The merged pull requests use the `pr` skill's `Summary` / `Evidence` / `Merge Danger`.
 
 ### Two lineages of agent configuration
 
