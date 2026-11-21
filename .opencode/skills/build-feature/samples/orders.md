@@ -45,7 +45,7 @@ export const orderSchema = z.object({
   customer: customerSchema,
   shipTo: addressSchema,
   total: z.number().nonnegative(),
-  placedAt: z.date(),
+  placedAt: z.coerce.date(),
 });
 
 export type Address = z.infer<typeof addressSchema>;
@@ -65,30 +65,38 @@ export * from "./schema";
 
 ## 3. `hooks/useGetOrders/index.ts`
 
-Stateful concern — talks to the data source. Accepts the repository as a parameter; never instantiates one.
+Stateful concern — talks to the data source. It reads through the API layer's cache, and the cache calls the data source directly: there is no interface around it, no adapter class, and no parameter to inject one (ADR-0001).
 
 ```ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
-import type { OrdersRepository } from "../../../../repositories/ordersRepository";
-import type { Order } from "../../logics";
+import { makeOrdersCache } from "@/apis/ordersCache";
 
-export const useGetOrders = (repository: OrdersRepository) => {
-  const {
-    data: orders = null,
-    isLoading,
-    error,
-  } = useQuery<Order[]>({
-    queryKey: ["orders"],
-    queryFn: () => repository.getOrders(),
-  });
+import { orderSchema } from "../../logics";
+
+export const useGetOrders = () => {
+  const queryClient = useQueryClient();
+  const cache = useMemo(() => makeOrdersCache(queryClient), [queryClient]);
+
+  const { data: payload = null, isLoading, error } = useQuery(cache.query());
+
+  const orders = useMemo(
+    () => (payload ? orderSchema.array().parse(payload) : null),
+    [payload],
+  );
+
   return { orders, isLoading, error };
 };
 ```
 
+`src/apis/ordersCache/` is the Orders analogue of `src/apis/usersCache/`: `fetchOrders` is the single data-source function, `makeOrdersCache` is the Query cache factory, and the query key lives in `src/apis/keys/index.ts`. The feature never writes the key, the stale time, or the query function itself.
+
+The payload the API layer returns is the wire shape; `orderSchema` is the feature's own domain schema, so the hook applies it and gets `Order[]` back.
+
 What this file does NOT do:
 
-- `new OrdersRepository()` — that's the singleton pattern; the parameter is the seam.
+- `new OrdersRepository()` — the repository layer was deleted (ADR-0001). One adapter means no seam: a seam only returns when a second adapter joins.
 - Local `useState` — that's view state; it lives in the presentation.
 - Filters, sorts, derived data — those are pure derivations; the presentation handles them.
 
@@ -97,11 +105,10 @@ What this file does NOT do:
 The public hook composes the sub-hooks. No sub-hooks here yet, but the structure is in place for when one appears.
 
 ```ts
-import type { OrdersRepository } from "../../../repositories/ordersRepository";
 import { useGetOrders } from "./useGetOrders";
 
-export const useOrders = (repository: OrdersRepository) => {
-  const { orders, isLoading, error } = useGetOrders(repository);
+export const useOrders = () => {
+  const { orders, isLoading, error } = useGetOrders();
   return { state: { orders, isLoading, error }, actions: {} };
 };
 ```
@@ -152,7 +159,7 @@ export const OrdersList = ({ orders, onDelete }: OrdersListProps) => {
 
 ## 6. `presentations/index.tsx`
 
-The main view. Receives everything via props. Reads nothing from Query or repositories.
+The main view. Receives everything via props. Reads nothing from Query or the data layer.
 
 ```tsx
 import type { Order } from "../logics";
@@ -184,16 +191,11 @@ Three explicit branches (`isLoading`, `error`, ready). No collapse into one tern
 The only file that knows about every role. Wires the public hook into the presentation.
 
 ```tsx
-import type { OrdersRepository } from "../../repositories/ordersRepository";
 import { useOrders } from "./hooks";
 import { OrdersView } from "./presentations";
 
-interface OrdersProps {
-  repository: OrdersRepository;
-}
-
-export const Orders = ({ repository }: OrdersProps) => {
-  const { state } = useOrders(repository);
+export const Orders = () => {
+  const { state } = useOrders();
   return (
     <OrdersView
       orders={state.orders}
@@ -205,27 +207,35 @@ export const Orders = ({ repository }: OrdersProps) => {
 };
 ```
 
-The `onDelete` is a placeholder — wiring real mutations is a separate concern that lives in the hooks layer (`queryClient.setQueryData`, `useMutation`). See the `UserList/hooks/useGetUsers/index.ts` for the deletion pattern.
+There is no `repository` prop: the hook pulls the data on its own (ADR-0001).
 
-## 8. Composition root — `src/main.tsx`
+The `onDelete` is a placeholder — wiring real mutations is a separate concern that lives in the hooks layer (`cache.remove`, `cache.reset`). See the `UserList/hooks/useGetUsers/index.ts` for the deletion pattern.
 
-```tsx
-import { OrdersRepository } from "./repositories/ordersRepository";
-import { HttpOrdersRepository } from "./repositories/ordersRepository";
+## 8. The data layer — `src/apis/ordersCache/`
 
-const ordersRepository = new HttpOrdersRepository();
-
-<App ordersRepository={ordersRepository} />;
+```ts
+// src/apis/ordersCache/fetchOrders.ts
+export async function fetchOrders(): Promise<OrdersPayload> {
+  const response = await getOrders();
+  if (response.status !== 200) {
+    throw new Error(`orders API returned ${response.status}`);
+  }
+  return response.data;
+}
 ```
 
-`main.tsx` is the only file that names a concrete adapter. Tests substitute the fake here.
+`src/apis/ordersCache/` is the Orders analogue of `src/apis/usersCache/`: `fetchOrders` is the single data-source function, `makeOrdersCache` is the Query cache factory, and the query key lives in `src/apis/keys/index.ts`. `OrdersPayload` is the generated contract type — the payload shape is owned by `openapi.yaml` and materialized by orval, never hand-written (ADR-0002).
+
+There is no adapter class and no interface around the data source (ADR-0001): one adapter means no seam. So there is no composition root either — `src/main.tsx` has nothing to wire for this feature, and the feature pulls its own data.
+
+Tests stub the network at the boundary (`vi.stubGlobal("fetch", …)`), not the API layer.
 
 ## What's not in this example
 
-- Mutations (delete, reset). The pattern: `useMutation` or `queryClient.setQueryData` in a hook, returned as `actions` from the public hook, passed as props to the presentation.
+- Mutations (delete, reset). The pattern: `cache.remove` / `cache.reset` in a hook, returned as `actions` from the public hook, passed as props to the presentation. The feature never writes the query key or calls `queryClient.setQueryData` itself.
 - Filters and sort. Pure derivations — `useMemo` in the presentation, fed by `useState` for the flag.
 - Sub-presentations beyond `OrdersList`. Same pattern: `presentations/<ChildName>/index.tsx`, narrower props.
-- Repository adapter classes. They're outside the feature folder. The interface (`OrdersRepository`) is in `src/repositories/`; this feature only imports the interface, never a concrete class.
+- Repository adapters and interfaces. ADR-0001 deleted the repository layer: there is no `src/repositories/`, and the data source is a plain function with no interface around it. A seam only comes back when a second adapter joins.
 
 ## What to verify before shipping
 
