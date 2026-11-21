@@ -22,24 +22,24 @@ Implement a new feature of this repository from a description of what it should 
 
 - **Read before writing.** These are the sources of the conventions. Read them; do not reconstruct them from memory.
 
-  | What you need | Where to read it |
-  |---|---|
-  | The feature role tree and the steps to scaffold it | `.opencode/skills/build-feature/SKILL.md` |
-  | A live example to confirm the convention | `src/features/UserList/` |
-  | The domain vocabulary of this repository | `CONTEXT.md` |
-  | The data-source decision, when the feature reads data | `docs/adr/0001-users-repository-as-prop.md` |
+  | What you need                                                      | Where to read it                                        |
+  | ------------------------------------------------------------------ | ------------------------------------------------------- |
+  | The feature role tree and the steps to scaffold it                 | `.opencode/skills/build-feature/SKILL.md`               |
+  | A live example to confirm the convention                           | `src/features/UserList/`                                |
+  | The domain vocabulary of this repository                           | `CONTEXT.md`                                            |
+  | The data-source decision, when the feature reads data              | `docs/adr/0001-users-repository-as-prop.md`             |
   | The API contract decision, when the feature calls the upstream API | `docs/adr/0002-repository-imports-type-from-feature.md` |
 
 - **Read the skill for the role you are writing.** Each role has its own skill, with the rules and the anti-patterns of that role. Read the one that matches the file you are about to write — not all five.
 
-  | The file you are writing | The skill to read |
-  |---|---|
-  | `src/features/<Name>/index.tsx` | `feature-container` |
-  | `src/features/<Name>/hooks/**` | `feature-hook` |
-  | Calling the API layer from a hook | `feature-api-hook` |
-  | `src/features/<Name>/logics/**` | `feature-logics` |
+  | The file you are writing               | The skill to read      |
+  | -------------------------------------- | ---------------------- |
+  | `src/features/<Name>/index.tsx`        | `feature-container`    |
+  | `src/features/<Name>/hooks/**`         | `feature-hook`         |
+  | Calling the API layer from a hook      | `feature-api-hook`     |
+  | `src/features/<Name>/logics/**`        | `feature-logics`       |
   | `src/features/<Name>/presentations/**` | `feature-presentation` |
-  | A test file you are unskipping | `feature-testing` |
+  | A test file you are unskipping         | `feature-testing`      |
 
 - **Follow `build-feature`.** It defines the role tree, that Zod is the single source of truth for domain types, that the hooks own the stateful behaviour, that the presentation is pure, and that `index.tsx` is the only file that knows every role. Use its anti-pattern list as a checklist before reporting completion.
 - **Name the feature after its domain term.** The folder is `src/features/<Name>/` in camelCase, a singular noun matching the domain vocabulary in `CONTEXT.md` (pluralise only when the domain already uses the plural).
@@ -48,14 +48,27 @@ Implement a new feature of this repository from a description of what it should 
 - **Wire the feature into the application.** A feature folder that nothing renders is not finished. Mount it where it belongs in the app and make sure it actually appears.
 - **Verify, and report the measured result.** Run these in order and quote the real output of each one, including the counts:
 
-  | Command | What it checks |
-  |---|---|
-  | `pnpm lint` | `oxlint src` — correctness rules |
-  | `pnpm exec tsc --noEmit` | the types |
-  | `pnpm test` | `vitest run` — the whole existing suite |
-  | `pnpm format:check` | `oxfmt --check` — the formatting |
+  | Command                  | What it checks                          |
+  | ------------------------ | --------------------------------------- |
+  | `pnpm lint`              | `oxlint src` — correctness rules        |
+  | `pnpm exec tsc --noEmit` | the types                               |
+  | `pnpm test`              | `vitest run` — the whole existing suite |
+  | `pnpm format:check`      | `oxfmt --check` — the formatting        |
 
   Use `tsc --noEmit` rather than `pnpm build` so the check stays fast; the `vite build` that follows it is not part of the verification. Use `format:check` rather than `format`, because `format` rewrites the files and hides which files the change actually touched. If a check fails because of your own code, fix your code and run the check again. If a check fails for a reason outside your change, report it as it is — do not make it pass by weakening the check.
+
+- **Format what you touched, before the checks.** `pnpm format:changed` formats only the files your change touches and names every file it rewrote. Run it once, before the verification:
+
+  ```console
+  $ pnpm format:changed
+  Formatted 12 file(s) in this change.
+  The formatter rewrote:
+    src/features/UserList/index.tsx
+  ```
+
+  **Never run `pnpm format`** — it rewrites the whole repository and buries your change under the formatter's opinion of files you never opened. `format:changed` does the same job for your files alone, and the rewrite stays visible in the diff.
+
+  The formatter now covers `.opencode/` as well as the source, so the rules and the skills are formatted too. It rewrites tables and emphasis markers; it does not change what a file says.
 
 ### What you may decide yourself
 

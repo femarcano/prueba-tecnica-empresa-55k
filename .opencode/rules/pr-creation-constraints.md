@@ -28,11 +28,11 @@ work is ready
 
 The body follows the **`pr` skill**'s template — `## Summary`, `## Evidence`, `## Merge Danger`. This is the convention in this repository's merged pull requests.
 
-| Section | What goes in it |
-|---|---|
-| `## Summary` | The smallest view that makes the key point clear: a diff-sketch, a tree, a call tree. What changed and why. |
-| `## Evidence` | The measured before and after. The exact command and its real output, including the counts. |
-| `## Merge Danger` | `**Door:**` one-way or two-way, and `**Blast Radius:**` the scope of what merging it affects. |
+| Section           | What goes in it                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| `## Summary`      | The smallest view that makes the key point clear: a diff-sketch, a tree, a call tree. What changed and why. |
+| `## Evidence`     | The measured before and after. The exact command and its real output, including the counts.                 |
+| `## Merge Danger` | `**Door:**` one-way or two-way, and `**Blast Radius:**` the scope of what merging it affects.               |
 
 Keep the prose brief. The reader is checking the change, not reading it.
 
@@ -52,16 +52,31 @@ A pull request that mixes a bug fix with a dependency bump, or a feature with a 
 
 Run all four and quote their real results:
 
-| Command | What it checks |
-|---|---|
-| `pnpm lint` | `oxlint src` — the correctness rules |
-| `pnpm exec tsc --noEmit` | the types |
-| `pnpm test` | `vitest run` — the whole suite |
-| `pnpm format:check` | `oxfmt --check` — the formatting |
+| Command                  | What it checks                       |
+| ------------------------ | ------------------------------------ |
+| `pnpm lint`              | `oxlint src` — the correctness rules |
+| `pnpm exec tsc --noEmit` | the types                            |
+| `pnpm test`              | `vitest run` — the whole suite       |
+| `pnpm format:check`      | `oxfmt --check` — the formatting     |
 
 `pnpm build` is not one of them: the `vite build` is slow, and `tsc --noEmit` is the part that catches code errors.
 
 **A check that fails because of the change must be fixed, not reported.** A pull request whose own lint fails is not ready. A check that fails for a reason outside the change is reported as it is, with the reason.
+
+## Formatting, before the checks
+
+`pnpm format:changed` formats only the files the change touches, and names every file it rewrote:
+
+```console
+$ pnpm format:changed
+Formatted 12 file(s) in this change.
+The formatter rewrote:
+  src/features/UserList/index.tsx
+```
+
+**Never run `pnpm format`.** It rewrites every file in the repository and buries the change under the formatter's opinion of files nobody opened. `format:changed` does the same job for the change's own files, and the rewrite stays visible in the diff.
+
+The formatter covers `.opencode/` as well as the source, so the rules, the skills and the agents are formatted too.
 
 ## Conventions
 

@@ -26,23 +26,23 @@ The separation matters: an agent that writes the code and the tests together ten
 
 - **Read before writing.** These are the sources of the conventions.
 
-  | What you need | Where to read it |
-  |---|---|
-  | How to write a test in this repository | `.opencode/skills/feature-testing/SKILL.md` |
-  | The behaviour of the code under test | the code, and the tests that already exist for it |
-  | The domain vocabulary | `CONTEXT.md` |
-  | The data-source decision | `docs/adr/0001-users-repository-as-prop.md` |
-  | The API contract decision | `docs/adr/0002-repository-imports-type-from-feature.md` |
+  | What you need                          | Where to read it                                        |
+  | -------------------------------------- | ------------------------------------------------------- |
+  | How to write a test in this repository | `.opencode/skills/feature-testing/SKILL.md`             |
+  | The behaviour of the code under test   | the code, and the tests that already exist for it       |
+  | The domain vocabulary                  | `CONTEXT.md`                                            |
+  | The data-source decision               | `docs/adr/0001-users-repository-as-prop.md`             |
+  | The API contract decision              | `docs/adr/0002-repository-imports-type-from-feature.md` |
 
 - **Write the test at the cheapest layer that can observe the behaviour.** A unit test for a pure function, for the data source, for the Query cache, or for a hook. An integration test for the feature as a whole, when the behaviour is only visible on screen. See the layer table in the `feature-testing` skill.
 
 - **Write the tests the kind of change calls for.** The three kinds differ in what "passing" means:
 
-  | The change | What to write | Do the tests pass now? |
-  |---|---|---|
-  | **New feature, or a behaviour that does not exist yet** | The tests of the specified behaviour | **No** — they fail, because the code is not written. Mark them `it.skip`. |
-  | **A defect fix** | A regression test that reproduces the defect | **No** — it fails against the broken code. Mark it `it.skip`. If an existing test asserts the defective behaviour, correct it to the correct behaviour and mark that one `it.skip` too. |
-  | **A refactoring, a migration, or a library update** | Tests that protect the current behaviour of the scope being touched | **Yes** — they pass against the current code, and they must keep passing after the change. |
+  | The change                                              | What to write                                                       | Do the tests pass now?                                                                                                                                                                  |
+  | ------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | **New feature, or a behaviour that does not exist yet** | The tests of the specified behaviour                                | **No** — they fail, because the code is not written. Mark them `it.skip`.                                                                                                               |
+  | **A defect fix**                                        | A regression test that reproduces the defect                        | **No** — it fails against the broken code. Mark it `it.skip`. If an existing test asserts the defective behaviour, correct it to the correct behaviour and mark that one `it.skip` too. |
+  | **A refactoring, a migration, or a library update**     | Tests that protect the current behaviour of the scope being touched | **Yes** — they pass against the current code, and they must keep passing after the change.                                                                                              |
 
   The distinction matters. A refactoring is supposed to change nothing observable, so its tests are a net that must not move. A new feature is supposed to add behaviour, so its tests are a specification that does not hold yet.
 
@@ -50,7 +50,7 @@ The separation matters: an agent that writes the code and the tests together ten
 
 - **Keep the tests independent of the implementation's shape.** Assert on behaviour — what is returned, what is rendered, what happens when the user acts. A test that asserts on a private function, on the number of `useMemo` calls, or on an internal field breaks when the code is reorganised, and it passes even when the behaviour is wrong.
 
-- **Name the tests as sentences that state the behaviour**, in English: *"narrows the rows to the users of the filtered country"*, *"throws a ZodError when a user field has the wrong shape"*. Not *"calls expect(...).rejects"*.
+- **Name the tests as sentences that state the behaviour**, in English: _"narrows the rows to the users of the filtered country"_, _"throws a ZodError when a user field has the wrong shape"_. Not _"calls expect(...).rejects"_.
 
 - **Report what you could not cover.** Some behaviour cannot be verified by a test in this environment — a browser behaviour that happy-dom does not implement, a timing that only shows up under load. Say so explicitly rather than leaving a silent gap.
 
@@ -89,6 +89,19 @@ The work is done when all of the following are true:
 - The tests that must pass now — for a refactoring, a migration, or a library update — do pass, and `pnpm test` is green for them.
 - `pnpm test`, `pnpm lint`, `pnpm exec tsc --noEmit`, and `pnpm format:check` were all run, and their real results are reported.
 - No product code was changed.
+
+## Format what you touched, before the checks
+
+Run `pnpm format:changed` once, before the verification. It formats only the files your change touches and names every file it rewrote:
+
+```console
+$ pnpm format:changed
+Formatted 3 file(s) in this change.
+The formatter rewrote:
+  src/features/UserList/index.test.tsx
+```
+
+**Never run `pnpm format`** — it rewrites the whole repository and buries your change under the formatter's opinion of files you never opened.
 
 ## The report
 

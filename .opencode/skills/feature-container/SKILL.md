@@ -84,14 +84,14 @@ The `Suspense` boundary matters: the feature's hook uses `useSuspenseQuery`, so 
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `<UserListPresentation {...state} {...actions} />` | Passes values the presentation does not need, and hides a renamed prop from the type checker. |
-| `const onClick = () => setThing(x)` in the container | Puts logic in the wiring file. Handlers come from the hook's `actions`. |
-| `useQuery` in `index.tsx` | The container is not the data layer. The hook owns queries. |
-| `format(new Date(user.registered.date))` in `index.tsx` | Display formatting belongs in `logics/`, not in the wiring file. |
-| `export type { UserListPresentationProps }` | The props type belongs to the leaf component; consumers derive it with `React.ComponentProps`. |
-| A feature that is never mounted | An unrendered feature is not finished work. |
+| Anti-pattern                                            | Why it is wrong                                                                                |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `<UserListPresentation {...state} {...actions} />`      | Passes values the presentation does not need, and hides a renamed prop from the type checker.  |
+| `const onClick = () => setThing(x)` in the container    | Puts logic in the wiring file. Handlers come from the hook's `actions`.                        |
+| `useQuery` in `index.tsx`                               | The container is not the data layer. The hook owns queries.                                    |
+| `format(new Date(user.registered.date))` in `index.tsx` | Display formatting belongs in `logics/`, not in the wiring file.                               |
+| `export type { UserListPresentationProps }`             | The props type belongs to the leaf component; consumers derive it with `React.ComponentProps`. |
+| A feature that is never mounted                         | An unrendered feature is not finished work.                                                    |
 
 ## Completion criteria
 
