@@ -100,6 +100,13 @@ A brief, not the raw output:
 - The list of files carrying `it.skip`, and why each one cannot pass yet.
 - Any ambiguity in the description, and how it was resolved.
 - Any behaviour that could not be covered, and why.
+- **Any stale documentation found while working** — see the rule below.
+
+## Stale documentation found along the way
+
+The rules, the skills, `CONTEXT.md`, `NOTES.md` and the ADRs describe a repository that moves. If one of them says something the code does not agree with, **record it and carry on** — do not fix it in passing, and do not let it stop the task.
+
+Report it at the end, with the file and the line, what it claims, what is actually true, and the evidence that showed the difference. The `stale-documentation` skill holds the format and the checks that find these. **Do not edit the file** — the PL decides whether a finding is worth fixing, and the `stale-fixer-agent` does the fixing.
 
 ## Related skills
 

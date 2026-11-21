@@ -4,6 +4,7 @@
   "instructions": [
     "CONTEXT.md",
     ".opencode/rules/pr-creation-constraints.md",
-    ".opencode/rules/worktree-constraints.md"
+    ".opencode/rules/worktree-constraints.md",
+    ".opencode/rules/stale-documentation-constraints.md"
   ]
 }

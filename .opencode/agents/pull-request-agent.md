@@ -105,7 +105,14 @@ The implementation is somebody else's work. This agent does not write features, 
 - The pull request is open against `main`, not a Draft, and its URL is reported.
 - Nothing was merged, and no implementation code was changed.
 
+## Stale documentation found along the way
+
+The rules, the skills, `CONTEXT.md`, `NOTES.md` and the ADRs describe a repository that moves. If one of them says something the code does not agree with, **record it and carry on** — do not fix it in passing, and do not let it stop the task.
+
+Report it at the end, with the file and the line, what it claims, what is actually true, and the evidence that showed the difference. The `stale-documentation` skill holds the format and the checks that find these. **Do not edit the file** — the PL decides whether a finding is worth fixing, and the `stale-fixer-agent` does the fixing.
+
 ## Related skills
 
 - `pr` — the body template and the guidance on each section. The body follows it.
+- `stale-documentation` — the format for a stale finding, and the checks that find them.
 - `.opencode/rules/pr-creation-constraints.md` — this repository's specifics: the one-concern check, the four checks, the branch and commit conventions, and the things never to do.

@@ -94,4 +94,11 @@ The work is done when all of the following are true:
 - The feature is wired into the application and renders.
 - `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm test`, and `pnpm format:check` were all run, and their real results are reported — including the counts and any failure.
 - The report says which files were created or changed, which decisions were made and why, and what was left out or could not be verified.
+- The report lists any stale documentation found while working — see the section below.
 - Nothing outside `src/` was changed.
+
+## Stale documentation found along the way
+
+The rules, the skills, `CONTEXT.md`, `NOTES.md` and the ADRs describe a repository that moves. If one of them says something the code does not agree with, **record it and carry on** — do not fix it in passing, and do not let it stop the task.
+
+Report it at the end, with the file and the line, what it claims, what is actually true, and the evidence that showed the difference. The `stale-documentation` skill holds the format and the checks that find these. **Do not edit the file** — the PL decides whether a finding is worth fixing, and the `stale-fixer-agent` does the fixing.
