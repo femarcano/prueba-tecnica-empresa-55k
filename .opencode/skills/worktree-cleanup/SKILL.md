@@ -83,6 +83,41 @@ The checks are read **in this order**. A branch that is not merged is reported a
 
 ## Removing it
 
+**First, check whether the directory is already gone.** A worktree that was deleted by hand — `rm -rf`, a cleaned-up temp folder — leaves its registration behind in `.git/worktrees/`, and `git worktree list` still shows it, marked `prunable`:
+
+```console
+$ git worktree list
+  .../prueba-tecnica-empresa-55k                           029697a [main]
+  .../prueba-tecnica-empresa-55k-worktrees/feat-old       029697a [feat/old] prunable
+```
+
+`prunable` means the directory is gone. There is nothing to remove — only the registration to clean up:
+
+```console
+$ git worktree prune -n -v
+  Removing worktrees/feat-old: gitdir file points to non-existent location
+```
+
+**`-n` is the dry run.** Read what it would remove before running it for real. Then:
+
+```console
+$ git worktree prune -v
+```
+
+**`prune` is the right command when the directory is already gone.** It removes only the registration, and it never touches a worktree whose directory still exists — so it cannot destroy work that is still on disk.
+
+### The grace period
+
+`--expire` limits the prune to registrations that have been missing for longer than the given time:
+
+```console
+$ git worktree prune -n -v --expire 14.days
+```
+
+Nothing is printed when the registration is too fresh. **Without `--expire` the grace period is off** and everything prunable goes at once. Use `--expire` when the age matters, and say what the limit is.
+
+### When the directory is still there
+
 ```console
 $ git worktree remove ../prueba-tecnica-empresa-55k-worktrees/<name>
 ```
@@ -91,10 +126,23 @@ $ git worktree remove ../prueba-tecnica-empresa-55k-worktrees/<name>
 
 **Removing the worktree does not delete the branch.** That is deliberate: the branch is what the pull request lives on, and deleting it is a separate decision. If the branch is merged and the pull request is closed, the branch can go too — but that is its own step, not a side effect of this one.
 
+### Locking one that must stay
+
+`git worktree lock` keeps a worktree from being pruned or removed, and records why:
+
+```console
+$ git worktree lock --reason "waiting on the PL" ../prueba-tecnica-empresa-55k-worktrees/feat-old
+```
+
+A locked worktree is the right answer for one the PL asked to keep. `git worktree list` shows it as `locked`. **Unlock it when the reason is over** — `git worktree unlock <path>`. A lock left behind keeps a worktree alive forever.
+
 ## Never, when cleaning up
 
 - **Never remove a worktree whose branch is not merged.** Report it instead.
 - **Never use `--force` to remove a worktree with uncommitted changes.** Those changes are the user's work.
+- **Never `rm -rf` a worktree directory.** `git worktree remove` deletes the directory and its registration together. Deleting the directory by hand leaves a stale registration that `git worktree list` still shows — clean it up with `git worktree prune`.
+- **Never prune without reading the dry run first.** `git worktree prune -n -v` first.
+- **Never remove a worktree that is locked.** It is locked for a reason; read `git worktree list` and unlock it only when the reason is over.
 - **Never remove the main checkout.** It is the first entry in `git worktree list`, and it is the one that is not a worktree.
 - **Never delete a branch that still has an open pull request.**
 - **Never ask about a worktree that is younger than 14 days.** The threshold exists so the question is rare enough to be worth asking.
@@ -117,6 +165,24 @@ branch refs/heads/feat/header-accessibility
 
 **The first entry is the main checkout, not a worktree.** Skip it. The rest are the worktrees this skill is about.
 
+### The annotations
+
+`git worktree list` marks the ones that need attention:
+
+| The annotation | What it means | What to do |
+|---|---|---|
+| `prunable` | The directory is gone; the registration is stale | `git worktree prune` |
+| `locked` | Kept on purpose, with a reason | Leave it; unlock it when the reason is over |
+| `detached` | The worktree is on a commit, not on a branch | Report it — a worktree should be on its own branch |
+
+```console
+$ git worktree list
+  .../prueba-tecnica-empresa-55k                           029697a [main]
+  .../prueba-tecnica-empresa-55k-worktrees/feat-old       029697a [feat/old] prunable
+```
+
+`git worktree list -v` adds the lock reason next to a locked worktree.
+
 ## Finding the path of a worktree
 
 The worktree's folder name is its branch name with the slashes turned into dashes, under the sibling folder named after the project:
@@ -134,7 +200,8 @@ feat/header-accessibility  →  ../prueba-tecnica-empresa-55k-worktrees/feat-hea
 ## Completion criteria
 
 - Every worktree except the main checkout has a merged verdict, an age, and a dirty verdict.
-- Worktrees that are merged and under 14 days are removed.
+- Worktrees that are merged and under 14 days are removed — with `git worktree remove` when the directory is there, with `git worktree prune` when it is already gone.
 - Worktrees that are 14 days or older have been reported to the PL with their age and merged state, and the removal happened only after the answer.
 - Worktrees that are not merged are reported and left alone.
-- The final `git worktree list` shows the main checkout and whatever was kept.
+- Locked worktrees are left alone, and the reason for each lock is reported.
+- The final `git worktree list` shows the main checkout and whatever was kept, with no `prunable` entry left behind.
