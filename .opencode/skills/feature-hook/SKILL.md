@@ -28,13 +28,21 @@ export const useUserList = () => {
   const [sortByCountry, setSortByCountry] = useState(false);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
 
-  const filteredUsers = useMemo(() => { /* ... */ }, [users, filterCountry]);
-  const sortedUsers = useMemo(() => { /* ... */ }, [filteredUsers, sortByCountry]);
+  const filteredUsers = useMemo(() => {
+    /* ... */
+  }, [users, filterCountry]);
+  const sortedUsers = useMemo(() => {
+    /* ... */
+  }, [filteredUsers, sortByCountry]);
 
-  const tableData = useTable({ /* ... */ });
+  const tableData = useTable({/* ... */});
 
-  const toggleColors = () => { setShowColors(!showColors); };
-  const toggleSortByCountry = () => { setSortByCountry((prevState) => !prevState); };
+  const toggleColors = () => {
+    setShowColors(!showColors);
+  };
+  const toggleSortByCountry = () => {
+    setSortByCountry((prevState) => !prevState);
+  };
 
   return {
     actions: {
@@ -59,7 +67,7 @@ export const useUserList = () => {
 ## Rules
 
 - **The return value is `{ state, actions }`.** One object, two groups. The container destructures once and passes each value on explicitly.
-- **`state` is data; `actions` is behaviour.** Anything the presentation needs to *see* is in `state`. Anything it needs to *do* is in `actions`.
+- **`state` is data; `actions` is behaviour.** Anything the presentation needs to _see_ is in `state`. Anything it needs to _do_ is in `actions`.
 - **One public hook per feature.** Sub-hooks go in their own folders (`hooks/useGetUsers/`). The public hook composes them.
 - **The hook calls the data layer.** This is the only role that may call `useSuspenseQuery`, `useQuery`, `useMutation` or `fetch`. See `feature-api-hook` for how it reaches the data.
 - **Local `useState` is for view state only** — a filter's text, a flag, whether a dialog is open. Data that comes from the server belongs to the Query cache, not to `useState`.
@@ -113,15 +121,15 @@ export const useGetUsers = () => {
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `new HttpXxxRepository()` inside a hook | The singleton pattern. ADR-0001 removed the repository layer — there is no seam until a second adapter exists. |
-| `const [users, setUsers] = useState([])` next to a query | Two sources of truth. The server data lives in the Query cache. |
-| `useEffect(() => { fetchUsers().then(setUsers) }, [])` | The Query cache does this. A `useEffect` that fetches duplicates it without the caching, the deduplication, or the error handling. |
-| Defining a handler in the presentation and passing it up | The handler belongs to the hook, in `actions`. |
-| Returning a flat object `{ users, onDelete, … }` | The container destructures once from `{ state, actions }`. A flat return does not separate data from behaviour. |
-| A sub-hook imported directly by the container | The public hook is the feature's single entry point. |
-| `useMemo` around a trivial expression | A dependency array to keep correct, for no benefit. |
+| Anti-pattern                                             | Why it is wrong                                                                                                                    |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `new HttpXxxRepository()` inside a hook                  | The singleton pattern. ADR-0001 removed the repository layer — there is no seam until a second adapter exists.                     |
+| `const [users, setUsers] = useState([])` next to a query | Two sources of truth. The server data lives in the Query cache.                                                                    |
+| `useEffect(() => { fetchUsers().then(setUsers) }, [])`   | The Query cache does this. A `useEffect` that fetches duplicates it without the caching, the deduplication, or the error handling. |
+| Defining a handler in the presentation and passing it up | The handler belongs to the hook, in `actions`.                                                                                     |
+| Returning a flat object `{ users, onDelete, … }`         | The container destructures once from `{ state, actions }`. A flat return does not separate data from behaviour.                    |
+| A sub-hook imported directly by the container            | The public hook is the feature's single entry point.                                                                               |
+| `useMemo` around a trivial expression                    | A dependency array to keep correct, for no benefit.                                                                                |
 
 ## Completion criteria
 

@@ -37,15 +37,15 @@ The criterion for whether a change belongs here is **whether the displayed conte
 
 - **Read the repository's own conventions** before changing anything:
 
-  | What you need | Where to read it |
-  |---|---|
-  | How the shared primitives are written | `.opencode/skills/ui-component/SKILL.md` |
-  | How a view is written here | `.opencode/skills/feature-presentation/SKILL.md` |
-  | How a test is written here | `.opencode/skills/feature-testing/SKILL.md` |
+  | What you need                         | Where to read it                                 |
+  | ------------------------------------- | ------------------------------------------------ |
+  | How the shared primitives are written | `.opencode/skills/ui-component/SKILL.md`         |
+  | How a view is written here            | `.opencode/skills/feature-presentation/SKILL.md` |
+  | How a test is written here            | `.opencode/skills/feature-testing/SKILL.md`      |
 
 - **Use the primitives in `src/components/ui/`.** The five that exist are `avatar`, `button`, `checkbox`, `input`, `table`. When a change needs a primitive that does not exist yet, that is a **new component** — report it rather than building it inline.
 
-- **Verify the behaviour, not the appearance.** This repository has no Storybook, no VRT, no Figma, and no browser automation. What it *does* have is the testing-library role and label queries, which are the real accessibility assertion available here:
+- **Verify the behaviour, not the appearance.** This repository has no Storybook, no VRT, no Figma, and no browser automation. What it _does_ have is the testing-library role and label queries, which are the real accessibility assertion available here:
 
   ```tsx
   screen.getByRole("table");
@@ -99,6 +99,7 @@ The criterion for whether a change belongs here is **whether the displayed conte
 5. apply the guide, adapted to React + Tailwind + this codebase's primitives
 
 6. verify:
+     pnpm format:changed
      pnpm lint
      pnpm exec tsc --noEmit
      pnpm test
@@ -107,6 +108,8 @@ The criterion for whether a change belongs here is **whether the displayed conte
 
 7. report: what changed, which guides shaped it, what was verified, what was not
 ```
+
+`pnpm format:changed` formats only the files the change touches and names every file it rewrote. **Never run `pnpm format`** — it rewrites the whole repository and buries the change under the formatter's opinion of files you never opened.
 
 ## Completion criteria
 

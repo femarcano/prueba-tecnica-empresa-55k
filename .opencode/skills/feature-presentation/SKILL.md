@@ -107,33 +107,37 @@ TanStack Table v9 is in use. The row and header accessors differ from v8:
 
 ```tsx
 // src/features/UserList/presentations/UsersList/index.tsx
-{tableData.getHeaderGroups().map((headerGroup) => {
-  return (
-    <TableRow key={headerGroup.id}>
-      {headerGroup.headers.map((header) => {
-        return (
-          <TableHead key={header.id}>
-            {header.isPlaceholder
-              ? null
-              : flexRender(header.column.columnDef.header, header.getContext())}
-          </TableHead>
-        );
-      })}
-    </TableRow>
-  );
-})}
+{
+  tableData.getHeaderGroups().map((headerGroup) => {
+    return (
+      <TableRow key={headerGroup.id}>
+        {headerGroup.headers.map((header) => {
+          return (
+            <TableHead key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(header.column.columnDef.header, header.getContext())}
+            </TableHead>
+          );
+        })}
+      </TableRow>
+    );
+  });
+}
 
-{tableData.getRowModel().rows.map((row) => {
-  return (
-    <TableRow key={row.id}>
-      {row.getAllCells().map((cell) => (
-        <TableCell key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-})}
+{
+  tableData.getRowModel().rows.map((row) => {
+    return (
+      <TableRow key={row.id}>
+        {row.getAllCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  });
+}
 ```
 
 - `row.getAllCells()` — **not** `row.getVisibleCells()`, which was v8.
@@ -142,17 +146,17 @@ TanStack Table v9 is in use. The row and header accessors differ from v8:
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `useSuspenseQuery` in a presentation | The hook owns the queries. The presentation renders what it is given. |
-| Importing `fetchUsers` in a presentation | The presentation does not know the data layer. |
-| A handler defined in the presentation | It comes in through props, from the hook's `actions`. |
-| A `components/` folder inside the feature | Shared UI belongs in `src/components/ui/`; feature-only UI belongs under `presentations/`. |
-| `styles.module.scss` | This repository uses Tailwind v4, not SCSS. |
-| `row.getVisibleCells()` | That is the v8 accessor. v9 uses `row.getAllCells()`. |
-| `tableData.getColumn.length` | That is the v8 accessor, and it returned `1`. Use `getAllLeafColumns().length`. |
-| Exporting a sub-component used only by the parent | It is an internal decomposition. |
-| A props list of ten fields | Split the view, or lift the derivation into the hook. |
+| Anti-pattern                                      | Why it is wrong                                                                            |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `useSuspenseQuery` in a presentation              | The hook owns the queries. The presentation renders what it is given.                      |
+| Importing `fetchUsers` in a presentation          | The presentation does not know the data layer.                                             |
+| A handler defined in the presentation             | It comes in through props, from the hook's `actions`.                                      |
+| A `components/` folder inside the feature         | Shared UI belongs in `src/components/ui/`; feature-only UI belongs under `presentations/`. |
+| `styles.module.scss`                              | This repository uses Tailwind v4, not SCSS.                                                |
+| `row.getVisibleCells()`                           | That is the v8 accessor. v9 uses `row.getAllCells()`.                                      |
+| `tableData.getColumn.length`                      | That is the v8 accessor, and it returned `1`. Use `getAllLeafColumns().length`.            |
+| Exporting a sub-component used only by the parent | It is an internal decomposition.                                                           |
+| A props list of ten fields                        | Split the view, or lift the derivation into the hook.                                      |
 
 ## Completion criteria
 

@@ -19,14 +19,14 @@ The code moves faster than the notes that describe it. A skill shows an example 
 
 Anything under these paths that no longer describes the repository:
 
-| The path | What lives there |
-|---|---|
+| The path              | What lives there                                                   |
+| --------------------- | ------------------------------------------------------------------ |
 | `.opencode/skills/**` | The role skills, their worked examples, the `build-feature` sample |
-| `.opencode/rules/**` | The rules that constrain the agents |
-| `.opencode/agents/**` | The agent definitions |
-| `CONTEXT.md` | The domain vocabulary — the terms and what they mean |
-| `NOTES.md` | The commands, the architecture, the known gaps |
-| `docs/adr/**` | The decision records |
+| `.opencode/rules/**`  | The rules that constrain the agents                                |
+| `.opencode/agents/**` | The agent definitions                                              |
+| `CONTEXT.md`          | The domain vocabulary — the terms and what they mean               |
+| `NOTES.md`            | The commands, the architecture, the known gaps                     |
+| `docs/adr/**`         | The decision records                                               |
 
 **Report everything out of date.** Not only the contradictions — the harmless wording, the historical note that no longer describes anything, the example that drifted. The PL decides what is worth changing; the agent does not filter.
 
@@ -45,12 +45,12 @@ Two reasons:
 
 An agent that found something stale says so at the end of its task, where the PL reads it. Each finding names:
 
-| The finding says | Why it matters |
-|---|---|
-| **The file and the line** | Where the stale text is |
-| **What it says now** | The current claim, quoted |
+| The finding says          | Why it matters                                                |
+| ------------------------- | ------------------------------------------------------------- |
+| **The file and the line** | Where the stale text is                                       |
+| **What it says now**      | The current claim, quoted                                     |
 | **What is actually true** | The code, the ADR body, or the other file that contradicts it |
-| **How it was found** | The check that disagreed, or the comparison that showed it |
+| **How it was found**      | The check that disagreed, or the comparison that showed it    |
 
 **A finding without its evidence is an opinion.** "This looks out of date" is not a finding; "`SKILL.md:77` cites ADR-0002 for a rule ADR-0002's body explicitly retired" is.
 

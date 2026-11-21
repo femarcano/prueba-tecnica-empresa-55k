@@ -20,11 +20,11 @@ worktrees:       ~/Projects/prueba-tecnica-empresa-55k-worktrees/<name>/
 
 The worktrees live in a **sibling directory**, named after the project: `<project>-worktrees/`. Under that folder, each worktree gets a folder named after the change.
 
-| The change | The worktree | The branch |
-|---|---|---|
-| A new feature `UserTable` | `prueba-tecnica-empresa-55k-worktrees/feat-user-table/` | `feat/user-table` |
-| A defect fix in the filter | `prueba-tecnica-empresa-55k-worktrees/fix-filter-case/` | `fix/filter-case` |
-| The header rewrite | `prueba-tecnica-empresa-55k-worktrees/feat-header-accessibility/` | `feat/header-accessibility` |
+| The change                 | The worktree                                                      | The branch                  |
+| -------------------------- | ----------------------------------------------------------------- | --------------------------- |
+| A new feature `UserTable`  | `prueba-tecnica-empresa-55k-worktrees/feat-user-table/`           | `feat/user-table`           |
+| A defect fix in the filter | `prueba-tecnica-empresa-55k-worktrees/fix-filter-case/`           | `fix/filter-case`           |
+| The header rewrite         | `prueba-tecnica-empresa-55k-worktrees/feat-header-accessibility/` | `feat/header-accessibility` |
 
 **The folder name is the branch name with its slashes turned into dashes.** That way the folder says what the change is, and the mapping back to the branch is mechanical.
 

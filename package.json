@@ -12,7 +12,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "orval": "orval --config ./orval.config.ts"
+    "orval": "orval --config ./orval.config.ts",
+    "format:changed": "node scripts/format-changed.mjs",
+    "format:changed:check": "node scripts/format-changed.mjs --check"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
