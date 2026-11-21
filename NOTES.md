@@ -8,19 +8,23 @@ Raw notes on this repository as it actually is. `CONTEXT.md` holds the domain gl
 | ----------------- | --------------------------------------------------------------- | ------------------------------------- |
 | `developer-agent` | New features — production code only, no tests, no PR, no commit | `.opencode/agents/developer-agent.md` |
 | `test-agent`      | The tests of a change, written before the change                | `.opencode/agents/test-agent.md`      |
+| `ui-ux-agent`     | The appearance and usability of the UI                          | `.opencode/agents/ui-ux-agent.md`     |
 
-Both are subagents: the main agent dispatches them.
+All three are subagents: the main agent dispatches them.
 
-### How the two fit together
+### How they fit together
 
-The `test-agent` writes the tests first and hands them over with `it.skip`; the `developer-agent` implements the code and removes the skips.
+The `test-agent` writes the tests first and hands them over with `it.skip`; the `developer-agent` and the `ui-ux-agent` implement the code and remove the skips.
 
 ```text
 main agent
   ├─ test-agent       writes the tests of the specified behaviour
   │                    └─ hands over: "these files carry it.skip"
-  └─ developer-agent  implements the code, removes the skips, makes them pass
+  ├─ developer-agent  implements the code, removes the skips, makes them pass
+  └─ ui-ux-agent      improves the appearance and usability, the same way
 ```
+
+The `ui-ux-agent` changes what the UI **looks like**, not what it displays or how it behaves. It applies the `modern-web-guidance` skill — it searches for the relevant guide, retrieves it, applies it, and reports which guides shaped the change.
 
 The separation is the point. An agent that writes the code and the tests together tends to write the test that matches the code it just wrote. The `test-agent` has to decide what the behaviour should be from the description, before it knows how the code will be shaped.
 
