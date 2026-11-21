@@ -47,12 +47,11 @@ Planned, not written. Each would get its own agent file in `.opencode/agents/`.
 | `feature-logics`       | `src/features/<Name>/logics/**` — converters, generators, schemas, shared values.                       |
 | `feature-presentation` | `src/features/<Name>/presentations/**` — the view.                                                      |
 | `feature-testing`      | How to write a test in this repository — placement, stubbing, queries, and which layer owns which test. |
+| `ui-component`         | How the shared primitives in `src/components/ui/` are written and added.                                |
 
 The agents read the skill for the role they are about to write, not all of them.
 
-One gap remains, and it is not a skill yet:
-
-- **A skill for `src/components/ui/`** — how a shared shadcn primitive is added to this repository, as distinct from the upstream configuration's SCSS-based `ui/` rules, which do not apply here.
+There are no gaps left in the skills: every role a change can touch has one.
 
 ### The rules
 
