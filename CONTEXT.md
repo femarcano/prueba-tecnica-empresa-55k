@@ -14,3 +14,7 @@ The single data-source function for the users list. Calls the orval-generated `g
 **Fake**:
 Withdrawn. The codebase no longer keeps a second adapter; tests stub the network seam (`vi.stubGlobal("fetch", ...)`) instead. Reintroduce the term if a second adapter is added at the data-source seam.
 _Avoid_: Mock, Stub
+
+**Field**:
+One of the columns of the table — Photo, Name, Email, Phone, City, State, Country, Delete. The set is fixed by the upstream payload and the orval-generated schema.
+_Avoid_: Column, Property, Attribute
