@@ -4,13 +4,14 @@ Raw notes on this repository as it actually is. `CONTEXT.md` holds the domain gl
 
 ## Agent roster on `main`
 
-| Agent             | Owns                                                            | Defined in                            |
-| ----------------- | --------------------------------------------------------------- | ------------------------------------- |
-| `developer-agent` | New features — production code only, no tests, no PR, no commit | `.opencode/agents/developer-agent.md` |
-| `test-agent`      | The tests of a change, written before the change                | `.opencode/agents/test-agent.md`      |
-| `ui-ux-agent`     | The appearance and usability of the UI                          | `.opencode/agents/ui-ux-agent.md`     |
+| Agent                | Owns                                                            | Defined in                               |
+| -------------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| `developer-agent`    | New features — production code only, no tests, no PR, no commit | `.opencode/agents/developer-agent.md`    |
+| `test-agent`         | The tests of a change, written before the change                | `.opencode/agents/test-agent.md`         |
+| `ui-ux-agent`        | The appearance and usability of the UI                          | `.opencode/agents/ui-ux-agent.md`        |
+| `pull-request-agent` | The pull request: branch, commit, push, open                    | `.opencode/agents/pull-request-agent.md` |
 
-All three are subagents: the main agent dispatches them.
+All four are subagents: the main agent dispatches them.
 
 ### How they fit together
 
@@ -21,7 +22,8 @@ main agent
   ├─ test-agent       writes the tests of the specified behaviour
   │                    └─ hands over: "these files carry it.skip"
   ├─ developer-agent  implements the code, removes the skips, makes them pass
-  └─ ui-ux-agent      improves the appearance and usability, the same way
+  ├─ ui-ux-agent      improves the appearance and usability, the same way
+  └─ pull-request-agent  turns what is in the working tree into a PR
 ```
 
 The `ui-ux-agent` changes what the UI **looks like**, not what it displays or how it behaves. It applies the `modern-web-guidance` skill — it searches for the relevant guide, retrieves it, applies it, and reports which guides shaped the change.
@@ -30,11 +32,11 @@ The separation is the point. An agent that writes the code and the tests togethe
 
 The `test-agent` also handles refactorings, migrations and library updates — the cases where the tests must pass _before_ the change, because the change is supposed to be invisible.
 
+The `pull-request-agent` is the last step. It packages the work the other agents left in the working tree — one concern, one branch, one commit, a body written with the `pr` skill — and opens the pull request. **It never merges**; a human does. It also never changes the implementation.
+
 ### Agents that do not exist yet
 
-Planned, not written. Each would get its own agent file in `.opencode/agents/`.
-
-- A **pull-request agent** — commits the branch, opens the PR. `developer-agent` deliberately stops at the working tree so the human stays in control of what gets pushed.
+None. The roster is complete for the flow this repository has: write the tests, implement, improve the UI, open the pull request, and a human merges it.
 
 ## Known gaps
 
