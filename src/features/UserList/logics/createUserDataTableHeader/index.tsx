@@ -11,6 +11,14 @@ type Args = {
 
 type IUserDataTableColumns = (args: Args) => ColumnDef<typeof userListTableFeatures, User>[];
 
+/**
+ * The columns of the users table.
+ *
+ * A column that carries a text value declares its label in `meta`, so the view
+ * can name the cell when the table is stacked into one card per row. The photo
+ * and the delete column have no label: the first renders an avatar, the second
+ * a button that names itself.
+ */
 export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) => {
   return [
     {
@@ -29,6 +37,7 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
     },
     {
       accessorKey: "name",
+      meta: { label: "Name" },
       cell: ({ row }) => {
         return `${row.original.name.title} ${row.original.name.first} ${row.original.name.last}`;
       },
@@ -36,22 +45,27 @@ export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) 
     },
     {
       accessorKey: "email",
+      meta: { label: "Email" },
       header: () => <p className="text-center">Email</p>,
     },
     {
       accessorKey: "phone",
+      meta: { label: "Phone" },
       header: () => <p className="text-center">Phone</p>,
     },
     {
       accessorKey: "location.city",
+      meta: { label: "City" },
       header: () => <p className="text-center">City</p>,
     },
     {
       accessorKey: "location.state",
+      meta: { label: "State" },
       header: () => <p className="text-center">State</p>,
     },
     {
       accessorKey: "location.country",
+      meta: { label: "Country" },
       header: () => <p className="text-center">Country</p>,
     },
     {

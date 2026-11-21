@@ -1,12 +1,22 @@
 import { cn } from "cn";
 import * as React from "react";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, "aria-label": ariaLabel, ...props }: React.ComponentProps<"table">) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    // The container is the scrollport, so it is the region that gets the focus:
+    // a keyboard user scrolls the table through it. The name belongs to the
+    // table, so the region is named after it rather than taking it over.
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+      role="region"
+      tabIndex={0}
+      aria-label={ariaLabel ? `${ariaLabel} (scrollable)` : undefined}
+    >
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
+        aria-label={ariaLabel}
         {...props}
       />
     </div>

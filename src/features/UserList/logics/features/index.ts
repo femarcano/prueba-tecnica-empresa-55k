@@ -11,5 +11,11 @@ import { tableFeatures } from "@tanstack/react-table";
  * need the same type: the column definitions are typed as
  * `ColumnDef<typeof userListTableFeatures, User>`, and the hook builds the table
  * with these features.
+ *
+ * `columnMeta` is a type-only slot. It declares the shape of `columnDef.meta`,
+ * which carries the label of a column so the view can name a cell when the
+ * table is stacked.
  */
-export const userListTableFeatures = tableFeatures({});
+export const userListTableFeatures = tableFeatures({
+  columnMeta: {} as { label?: string },
+});
