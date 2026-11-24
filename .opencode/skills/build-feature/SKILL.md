@@ -62,11 +62,11 @@ import { z } from "zod";
 export const nameSchema = z.object({/* ... */});
 export type Name = z.infer<typeof nameSchema>;
 
-export const userSchema = z.object({
+export const orderSchema = z.object({
   name: nameSchema, // compose by name, don't inline
   // ...
 });
-export type User = z.infer<typeof userSchema>;
+export type Order = z.infer<typeof orderSchema>;
 ```
 
 **Rules**
@@ -74,7 +74,8 @@ export type User = z.infer<typeof userSchema>;
 - One schema per noun (`userSchema`, `orderSchema`).
 - Compose sub-schemas by reference (`name: nameSchema`), not by inlining.
 - `export type` the inferred type alongside its schema.
-- Do **not** create a `src/types/<feature>.ts` file. The feature owns its types via `logics/schema/`. If another module needs the type, import from `../features/<feature>/logics` (this is the documented layering — see ADR-0002).
+- Do **not** create a `src/types/<feature>.ts` file. The feature's own domain types are owned by `logics/schema/`, and another module that needs one imports it from the feature's `logics` barrel (`../features/<feature>/logics`).
+- The **upstream payload** type is the exception: it is not the feature's to define. It is owned by `openapi.yaml` and materialized by orval, so it is imported from the API layer (`@/apis/usersCache`), never re-declared in `logics/schema/` and never lifted into a shared types module (ADR-0002).
 
 Completion: every noun the feature exposes has a `<noun>Schema` and a derived `<Noun>` type.
 
