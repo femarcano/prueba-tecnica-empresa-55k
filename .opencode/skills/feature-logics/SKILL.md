@@ -112,11 +112,11 @@ import { z } from "zod";
 export const nameSchema = z.object({/* ... */});
 export type Name = z.infer<typeof nameSchema>;
 
-export const userSchema = z.object({
+export const orderSchema = z.object({
   name: nameSchema, // compose by reference, do not inline
   // ...
 });
-export type User = z.infer<typeof userSchema>;
+export type Order = z.infer<typeof orderSchema>;
 ```
 
 Rules:
@@ -124,7 +124,7 @@ Rules:
 - **One schema per noun** — `userSchema`, `orderSchema`.
 - **Compose sub-schemas by reference** (`name: nameSchema`), not by inlining the object twice.
 - **Export the inferred type alongside its schema.**
-- **No `src/types/<feature>.ts`.** The feature owns its types through `logics/schema/`. Another module that needs the type imports it from the feature's `logics` barrel (ADR-0002).
+- **No `src/types/<feature>.ts`.** The feature's own domain types are owned by `logics/schema/`, and another module that needs one imports it from the feature's `logics` barrel. The upstream payload type is the exception — it is imported, not owned (ADR-0002).
 
 One exception, and it is a real one: **the type of the upstream payload is not the feature's to define.** `User` comes from the generated schema:
 
