@@ -90,6 +90,19 @@ The work is done when all of the following are true:
 - `pnpm test`, `pnpm lint`, `pnpm exec tsc --noEmit`, and `pnpm format:check` were all run, and their real results are reported.
 - No product code was changed.
 
+## Format what you touched, before the checks
+
+Run `pnpm format:changed` once, before the verification. It formats only the files your change touches and names every file it rewrote:
+
+```console
+$ pnpm format:changed
+Formatted 3 file(s) in this change.
+The formatter rewrote:
+  src/features/UserList/index.test.tsx
+```
+
+**Never run `pnpm format`** — it rewrites the whole repository and buries your change under the formatter's opinion of files you never opened.
+
 ## The report
 
 A brief, not the raw output:

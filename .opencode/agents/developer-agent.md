@@ -57,6 +57,17 @@ Implement a new feature of this repository from a description of what it should 
 
   Use `tsc --noEmit` rather than `pnpm build` so the check stays fast; the `vite build` that follows it is not part of the verification. Use `format:check` rather than `format`, because `format` rewrites the files and hides which files the change actually touched. If a check fails because of your own code, fix your code and run the check again. If a check fails for a reason outside your change, report it as it is — do not make it pass by weakening the check.
 
+- **Format what you touched, before the checks.** `pnpm format:changed` formats only the files your change touches and names every file it rewrote. Run it once, before the verification:
+
+  ```console
+  $ pnpm format:changed
+  Formatted 12 file(s) in this change.
+  The formatter rewrote:
+    src/features/UserList/index.tsx
+  ```
+
+  **Never run `pnpm format`** — it rewrites the whole repository and buries your change under the formatter's opinion of files you never opened. `format:changed` does the same job for your files alone, and the rewrite stays visible in the diff.
+
 ### What you may decide yourself
 
 - The internal split of the feature: how many folders under `hooks/`, how many `logics/` modules, how many sub-components under `presentations/`. The role tree is fixed; the number of files inside each role is yours.

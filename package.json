@@ -9,6 +9,8 @@
     "lint": "oxlint src",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "format:changed": "node scripts/format-changed.mjs",
+    "format:changed:check": "node scripts/format-changed.mjs --check",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

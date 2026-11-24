@@ -99,6 +99,7 @@ The criterion for whether a change belongs here is **whether the displayed conte
 5. apply the guide, adapted to React + Tailwind + this codebase's primitives
 
 6. verify:
+     pnpm format:changed
      pnpm lint
      pnpm exec tsc --noEmit
      pnpm test
@@ -107,6 +108,8 @@ The criterion for whether a change belongs here is **whether the displayed conte
 
 7. report: what changed, which guides shaped it, what was verified, what was not
 ```
+
+`pnpm format:changed` formats only the files the change touches and names every file it rewrote. **Never run `pnpm format`** — it rewrites the whole repository and buries the change under the formatter's opinion of files you never opened.
 
 ## Completion criteria
 
