@@ -9,11 +9,11 @@ The rules, the skills, `CONTEXT.md`, `NOTES.md` and the ADRs describe a reposito
 
 It has three parts, and they happen at different times:
 
-| Part | When |
-|---|---|
-| **Finding** | While an agent is doing its own task |
-| **Reporting** | When that task is done |
-| **Fixing** | Only after the PL approves a finding |
+| Part          | When                                 |
+| ------------- | ------------------------------------ |
+| **Finding**   | While an agent is doing its own task |
+| **Reporting** | When that task is done               |
+| **Fixing**    | Only after the PL approves a finding |
 
 ## Finding
 
@@ -21,17 +21,17 @@ Read the documentation as part of the task. Whenever a rule, a skill, the glossa
 
 ### What to look for
 
-| The tell | What it means |
-|---|---|
-| A skill shows a file, a folder or a symbol that does not exist | The example drifted from the code |
-| A skill's worked sample contradicts its own `SKILL.md` | The prose was updated and the artifact was not |
-| A rule, a skill or an agent cites an ADR for a rule that ADR retired | The citation points at the wrong decision |
-| `NOTES.md` records a gap that has since been closed | The note is out of date |
-| `NOTES.md` or `CONTEXT.md` uses a term the code no longer uses | The vocabulary drifted |
-| An ADR's **filename** names a decision its **body** rejects | The title was left over from an earlier world |
-| A skill describes a mechanism that was removed | The rule points at a thing that is gone |
-| Two skills give opposite instructions for the same thing | One of them is wrong |
-| An agent definition tells the agent to do something its scope forbids | The two contradict each other |
+| The tell                                                              | What it means                                  |
+| --------------------------------------------------------------------- | ---------------------------------------------- |
+| A skill shows a file, a folder or a symbol that does not exist        | The example drifted from the code              |
+| A skill's worked sample contradicts its own `SKILL.md`                | The prose was updated and the artifact was not |
+| A rule, a skill or an agent cites an ADR for a rule that ADR retired  | The citation points at the wrong decision      |
+| `NOTES.md` records a gap that has since been closed                   | The note is out of date                        |
+| `NOTES.md` or `CONTEXT.md` uses a term the code no longer uses        | The vocabulary drifted                         |
+| An ADR's **filename** names a decision its **body** rejects           | The title was left over from an earlier world  |
+| A skill describes a mechanism that was removed                        | The rule points at a thing that is gone        |
+| Two skills give opposite instructions for the same thing              | One of them is wrong                           |
+| An agent definition tells the agent to do something its scope forbids | The two contradict each other                  |
 
 ### The checks that find these
 
@@ -68,11 +68,11 @@ ACTUALLY   The heading is "Users" — src/features/UserList/presentations/index.
 EVIDENCE  The header was rewritten in PR #61; the skill still shows the old markup
 ```
 
-| The field | What goes in it |
-|---|---|
-| **FILE** | The path and the line number |
-| **CLAIMS** | The current text, quoted |
-| **ACTUALLY** | What is true, and where the truth is |
+| The field    | What goes in it                                            |
+| ------------ | ---------------------------------------------------------- |
+| **FILE**     | The path and the line number                               |
+| **CLAIMS**   | The current text, quoted                                   |
+| **ACTUALLY** | What is true, and where the truth is                       |
 | **EVIDENCE** | The check that disagreed, or the comparison that showed it |
 
 **A finding without evidence is an opinion.** "This looks out of date" is not a finding.
@@ -83,12 +83,12 @@ EVIDENCE  The header was rewritten in PR #61; the skill still shows the old mark
 
 ### What a finding is not
 
-| Not a finding | Why |
-|---|---|
-| A preference for different wording | That is a style opinion, not staleness |
-| A missing rule | A rule that was never written is a gap, not stale documentation |
-| A historical note that is still true | History does not expire |
-| A finding about the code | That is a defect, and it belongs to whoever fixes defects |
+| Not a finding                        | Why                                                             |
+| ------------------------------------ | --------------------------------------------------------------- |
+| A preference for different wording   | That is a style opinion, not staleness                          |
+| A missing rule                       | A rule that was never written is a gap, not stale documentation |
+| A historical note that is still true | History does not expire                                         |
+| A finding about the code             | That is a defect, and it belongs to whoever fixes defects       |
 
 ## Fixing
 
@@ -98,10 +98,10 @@ EVIDENCE  The header was rewritten in PR #61; the skill still shows the old mark
 
 **One concern per pull request.** A concern is a set of findings that would be reverted together.
 
-| The findings | The concern | The pull request |
-|---|---|---|
-| Two findings in the same file | One | One |
-| One finding in a skill, one in an unrelated ADR | Two | Two |
+| The findings                                    | The concern | The pull request |
+| ----------------------------------------------- | ----------- | ---------------- |
+| Two findings in the same file                   | One         | One              |
+| One finding in a skill, one in an unrelated ADR | Two         | Two              |
 
 Would reverting them together roll back something unrelated? If yes, they are two concerns.
 
@@ -120,14 +120,14 @@ the PL approves a finding
 
 ### How to fix each kind
 
-| The finding | The fix |
-|---|---|
-| A skill shows code that no longer exists | Update the code in the skill to the current form. Do not delete the example — it is the teaching material. |
-| A skill's sample contradicts its own prose | Bring the sample in line with the prose. The prose is the rule; the sample is the artifact. |
-| A citation points at a retired rule | Cite the rule that is in force. If the ADR's own title is wrong, rename the file and say so in the report — a rename is a link change for anyone who cited it. |
-| `NOTES.md` records a closed gap | Remove the entry, or rewrite it to describe what is there now. |
-| A term in `CONTEXT.md` no longer matches the code | **Ask the PL which term is right.** The vocabulary is a decision, not a typo. |
-| Two skills contradict each other | Bring the weaker one in line with the stronger, and report which was changed and why. |
+| The finding                                       | The fix                                                                                                                                                        |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A skill shows code that no longer exists          | Update the code in the skill to the current form. Do not delete the example — it is the teaching material.                                                     |
+| A skill's sample contradicts its own prose        | Bring the sample in line with the prose. The prose is the rule; the sample is the artifact.                                                                    |
+| A citation points at a retired rule               | Cite the rule that is in force. If the ADR's own title is wrong, rename the file and say so in the report — a rename is a link change for anyone who cited it. |
+| `NOTES.md` records a closed gap                   | Remove the entry, or rewrite it to describe what is there now.                                                                                                 |
+| A term in `CONTEXT.md` no longer matches the code | **Ask the PL which term is right.** The vocabulary is a decision, not a typo.                                                                                  |
+| Two skills contradict each other                  | Bring the weaker one in line with the stronger, and report which was changed and why.                                                                          |
 
 **A rename is not a silent change.** Renaming a file or a term breaks every citation to it. Report it, and let the PL know what has to follow.
 

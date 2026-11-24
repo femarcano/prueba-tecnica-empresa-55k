@@ -37,15 +37,15 @@ The criterion for whether a change belongs here is **whether the displayed conte
 
 - **Read the repository's own conventions** before changing anything:
 
-  | What you need | Where to read it |
-  |---|---|
-  | How the shared primitives are written | `.opencode/skills/ui-component/SKILL.md` |
-  | How a view is written here | `.opencode/skills/feature-presentation/SKILL.md` |
-  | How a test is written here | `.opencode/skills/feature-testing/SKILL.md` |
+  | What you need                         | Where to read it                                 |
+  | ------------------------------------- | ------------------------------------------------ |
+  | How the shared primitives are written | `.opencode/skills/ui-component/SKILL.md`         |
+  | How a view is written here            | `.opencode/skills/feature-presentation/SKILL.md` |
+  | How a test is written here            | `.opencode/skills/feature-testing/SKILL.md`      |
 
 - **Use the primitives in `src/components/ui/`.** The five that exist are `avatar`, `button`, `checkbox`, `input`, `table`. When a change needs a primitive that does not exist yet, that is a **new component** — report it rather than building it inline.
 
-- **Verify the behaviour, not the appearance.** This repository has no Storybook, no VRT, no Figma, and no browser automation. What it *does* have is the testing-library role and label queries, which are the real accessibility assertion available here:
+- **Verify the behaviour, not the appearance.** This repository has no Storybook, no VRT, no Figma, and no browser automation. What it _does_ have is the testing-library role and label queries, which are the real accessibility assertion available here:
 
   ```tsx
   screen.getByRole("table");

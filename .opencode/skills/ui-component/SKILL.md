@@ -7,13 +7,13 @@ description: How the shared UI primitives in `src/components/ui/` are written an
 
 `src/components/ui/` holds the **shared** primitives: the ones more than one feature uses. They are stateless, know nothing about the domain, and are built on `@base-ui/react` with Tailwind v4 utility classes.
 
-| File | What it is |
-|---|---|
-| `avatar.tsx` | `Avatar`, `AvatarImage`, `AvatarFallback`, `AvatarGroup`, `AvatarGroupCount`, `AvatarBadge` |
-| `button.tsx` | `Button`, `buttonVariants` |
-| `checkbox.tsx` | `Checkbox` |
-| `input.tsx` | `Input` |
-| `table.tsx` | `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption` |
+| File           | What it is                                                                                               |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| `avatar.tsx`   | `Avatar`, `AvatarImage`, `AvatarFallback`, `AvatarGroup`, `AvatarGroupCount`, `AvatarBadge`              |
+| `button.tsx`   | `Button`, `buttonVariants`                                                                               |
+| `checkbox.tsx` | `Checkbox`                                                                                               |
+| `input.tsx`    | `Input`                                                                                                  |
+| `table.tsx`    | `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption` |
 
 ## What belongs here, and what does not
 
@@ -62,12 +62,12 @@ There is **no CSS file, no SCSS, and no `styles.module.scss`** in `src/component
 
 Use the semantic tokens, never a raw colour:
 
-| Instead of | Use |
-|---|---|
-| `bg-blue-500` | `bg-primary`, `bg-secondary`, `bg-muted`, `bg-accent`, `bg-destructive` |
-| `text-gray-900` | `text-foreground`, `text-muted-foreground`, `text-primary-foreground` |
-| `border-gray-200` | `border-border`, `border-input`, `border-destructive` |
-| `outline-blue-500` | `focus-visible:ring-ring`, `focus-visible:border-ring` |
+| Instead of         | Use                                                                     |
+| ------------------ | ----------------------------------------------------------------------- |
+| `bg-blue-500`      | `bg-primary`, `bg-secondary`, `bg-muted`, `bg-accent`, `bg-destructive` |
+| `text-gray-900`    | `text-foreground`, `text-muted-foreground`, `text-primary-foreground`   |
+| `border-gray-200`  | `border-border`, `border-input`, `border-destructive`                   |
+| `outline-blue-500` | `focus-visible:ring-ring`, `focus-visible:border-ring`                  |
 
 The tokens are defined in `src/index.css` as `--color-*` variables, which Tailwind v4 turns into the utilities above. The full set is `primary`, `secondary`, `muted`, `accent`, `destructive`, `card`, `popover`, `background`, `foreground`, `border`, `input`, `ring`, and their `-foreground` pairs.
 
@@ -92,7 +92,7 @@ import { cn } from "cn";
 `data-slot` is the hook the rest of the styling hangs on. A state is expressed through it or through a data attribute next to it — `data-size={size}` on the avatar, `data-checked:` on the checkbox.
 
 ```tsx
-"group/avatar relative flex size-8 shrink-0 rounded-full … data-[size=lg]:size-10 data-[size=sm]:size-6 …"
+"group/avatar relative flex size-8 shrink-0 rounded-full … data-[size=lg]:size-10 data-[size=sm]:size-6 …";
 ```
 
 That is a Tailwind variant selector reading a data attribute. It is how a primitive styles itself in each state.
@@ -147,9 +147,21 @@ Only `button` has variants today. A component that needs one set of variants use
   "style": "base-luma",
   "rsc": false,
   "tsx": true,
-  "tailwind": { "config": "", "css": "src/index.css", "baseColor": "neutral", "cssVariables": true, "prefix": "" },
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
   "iconLibrary": "remixicon",
-  "aliases": { "components": "@/components", "utils": "@/lib/utils", "ui": "@/components/ui", "lib": "@/lib", "hooks": "@/hooks" }
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  }
 }
 ```
 
@@ -191,17 +203,17 @@ There is no icon barrel and no `assets/icons/` directory in this repository — 
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `styles.module.scss` beside a component | This repository uses Tailwind v4. There is no SCSS. |
-| `className="bg-blue-500"` | A raw colour. Use the semantic token. |
-| `import { cn } from "@/lib/utils"` | The primitives import the `cn` package directly. |
-| `style={{ color: … }}` | Inline styles cannot be overridden by the consumer's `className`. |
-| A `Stack` component | It does not exist here. |
-| A component that imports from `@/apis/` | A primitive does not know the data layer. |
-| A component that filters a list of users | That is a feature view, not a shared primitive. |
-| Passing `className` through without merging | The consumer's classes would lose to the component's. |
-| A `data-testid` on a primitive | The primitive's role is the assertion. `data-slot` is for styling. |
+| Anti-pattern                                | Why it is wrong                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| `styles.module.scss` beside a component     | This repository uses Tailwind v4. There is no SCSS.                |
+| `className="bg-blue-500"`                   | A raw colour. Use the semantic token.                              |
+| `import { cn } from "@/lib/utils"`          | The primitives import the `cn` package directly.                   |
+| `style={{ color: … }}`                      | Inline styles cannot be overridden by the consumer's `className`.  |
+| A `Stack` component                         | It does not exist here.                                            |
+| A component that imports from `@/apis/`     | A primitive does not know the data layer.                          |
+| A component that filters a list of users    | That is a feature view, not a shared primitive.                    |
+| Passing `className` through without merging | The consumer's classes would lose to the component's.              |
+| A `data-testid` on a primitive              | The primitive's role is the assertion. `data-slot` is for styling. |
 
 ## Completion criteria
 

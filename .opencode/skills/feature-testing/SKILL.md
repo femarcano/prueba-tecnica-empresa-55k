@@ -49,13 +49,13 @@ import { UserList } from "./index";
 
 ## Which layer owns which test
 
-| The code under test | What to write |
-|---|---|
-| A pure function — a `logics/` module, a converter, a generator, a schema | A **unit test**: call it directly, assert on the return value |
-| The data source (`fetchUsers`) | A **unit test** with `fetch` stubbed |
-| The Query cache (`makeUsersCache`) | A **unit test** with a real `QueryClient` and `fetch` stubbed |
-| A hook that wraps a query (`useGetUsers`) | A **unit test** with `renderHook`, a `QueryClientProvider` and a `Suspense` wrapper |
-| The feature as a whole (`index.tsx`) | An **integration test**: render the feature, assert on the DOM |
+| The code under test                                                      | What to write                                                                       |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| A pure function — a `logics/` module, a converter, a generator, a schema | A **unit test**: call it directly, assert on the return value                       |
+| The data source (`fetchUsers`)                                           | A **unit test** with `fetch` stubbed                                                |
+| The Query cache (`makeUsersCache`)                                       | A **unit test** with a real `QueryClient` and `fetch` stubbed                       |
+| A hook that wraps a query (`useGetUsers`)                                | A **unit test** with `renderHook`, a `QueryClientProvider` and a `Suspense` wrapper |
+| The feature as a whole (`index.tsx`)                                     | An **integration test**: render the feature, assert on the DOM                      |
 
 **Prefer the cheapest layer that can observe the behaviour.** A unit test is faster and more precise than an integration test. Reach for the integration test when the behaviour is only visible on screen — what is rendered, in what order, and what happens when the user acts.
 
@@ -69,8 +69,8 @@ describe("fetchUsers", () => {
 ```
 
 - **`describe`** is named after the unit under test — the function, the hook, or the component. The function's name.
-- **`it`** states what the test asserts, in the present tense, as a sentence: *"returns parsed User[] when the payload is valid"*, *"filters the user with the matching uuid out of the cache"*, *"narrows the rows to the users of the filtered country"*.
-- **Name the condition, not the mechanics.** *"throws a ZodError when a user field has the wrong shape"* says what happened; *"calls expect(...).rejects"* says nothing about the behaviour.
+- **`it`** states what the test asserts, in the present tense, as a sentence: _"returns parsed User[] when the payload is valid"_, _"filters the user with the matching uuid out of the cache"_, _"narrows the rows to the users of the filtered country"_.
+- **Name the condition, not the mechanics.** _"throws a ZodError when a user field has the wrong shape"_ says what happened; _"calls expect(...).rejects"_ says nothing about the behaviour.
 - **Group by concern** with nested `describe` when a unit has several methods — `describe("makeUsersCache")` containing `describe("query")`, `describe("remove")`, `describe("reset")`.
 - The names in this repository are **in English**. Write them in English.
 
@@ -226,18 +226,18 @@ The path argument is a partial match, so a fragment can match more than one file
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `vi.mock("@/apis/usersCache")` | It skips the parsing and the status handling — the parts worth testing. Stub `fetch`. |
-| `vi.mock` of the module under test | The test then asserts against the mock, not the behaviour. |
-| `data-testid` on an element with a role | Two ways for the test to break; the role query is the better assertion. |
-| Omitting `cleanup()` in a DOM test | The renders accumulate, and the next test's queries see the previous test's rows. |
-| `screen.getByText(...)` without scoping, with several of the same | It matches the first one in the document, which may be the wrong one. |
-| `expect(user.location.country).toBe("Canada")` on the raw API object | It asserts on the upstream's shape, not on what the user sees. Assert on the rendered row. |
-| A snapshot of the whole page | It fails on every unrelated change and nobody reads the diff. |
-| A test name that describes the mechanics | *"calls expect(...).rejects"* says nothing. Say what happens. |
-| `it.skip` left in place after the implementation lands | The test does not run. The implementer removes the skip. |
-| Installing `user-event` to write one test | A dependency change is a bigger decision than a test. `fireEvent` is what this repository uses. |
+| Anti-pattern                                                         | Why it is wrong                                                                                 |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `vi.mock("@/apis/usersCache")`                                       | It skips the parsing and the status handling — the parts worth testing. Stub `fetch`.           |
+| `vi.mock` of the module under test                                   | The test then asserts against the mock, not the behaviour.                                      |
+| `data-testid` on an element with a role                              | Two ways for the test to break; the role query is the better assertion.                         |
+| Omitting `cleanup()` in a DOM test                                   | The renders accumulate, and the next test's queries see the previous test's rows.               |
+| `screen.getByText(...)` without scoping, with several of the same    | It matches the first one in the document, which may be the wrong one.                           |
+| `expect(user.location.country).toBe("Canada")` on the raw API object | It asserts on the upstream's shape, not on what the user sees. Assert on the rendered row.      |
+| A snapshot of the whole page                                         | It fails on every unrelated change and nobody reads the diff.                                   |
+| A test name that describes the mechanics                             | _"calls expect(...).rejects"_ says nothing. Say what happens.                                   |
+| `it.skip` left in place after the implementation lands               | The test does not run. The implementer removes the skip.                                        |
+| Installing `user-event` to write one test                            | A dependency change is a bigger decision than a test. `fireEvent` is what this repository uses. |
 
 ## Completion criteria
 

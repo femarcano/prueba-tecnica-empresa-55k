@@ -78,12 +78,12 @@ export function makeUsersCache(queryClient: QueryClient) {
 
 ## The four pieces
 
-| Piece | Where | What it is |
-|---|---|---|
-| **The query key** | `src/apis/keys/index.ts` | `export const GET_USERS_KEY = ["users"] as const;` — the cache identity. Every read and every write uses the same key. |
-| **The data source** | `src/apis/usersCache/fetchUsers.ts` | The one function that calls the upstream API and parses the response. |
-| **The cache factory** | `src/apis/usersCache/index.ts` | `makeUsersCache(queryClient)` — the Query options, and the mutations that write to the cache. |
-| **The generated client** | `src/apis/__generated__/` | The typed client and the Zod schema, both produced by orval from `openapi.yaml`. |
+| Piece                    | Where                               | What it is                                                                                                             |
+| ------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **The query key**        | `src/apis/keys/index.ts`            | `export const GET_USERS_KEY = ["users"] as const;` — the cache identity. Every read and every write uses the same key. |
+| **The data source**      | `src/apis/usersCache/fetchUsers.ts` | The one function that calls the upstream API and parses the response.                                                  |
+| **The cache factory**    | `src/apis/usersCache/index.ts`      | `makeUsersCache(queryClient)` — the Query options, and the mutations that write to the cache.                          |
+| **The generated client** | `src/apis/__generated__/`           | The typed client and the Zod schema, both produced by orval from `openapi.yaml`.                                       |
 
 ## Rules
 
@@ -98,8 +98,9 @@ export function makeUsersCache(queryClient: QueryClient) {
   ```
 
   A feature that needs the type imports it from `@/apis/usersCache`. It does not declare its own `User` interface, and it does not create `src/types/user.ts`.
+
 - **No repository, adapter, or service.** There is one adapter, so the seam does not exist. Introducing an interface for a hypothetical second implementation is the mistake ADR-0001 explicitly rejects. When a second adapter joins — an in-memory cache for offline mode, a server-side backed one — the interface is introduced at that threshold.
-- **The data source throws on a non-200.** `fetchUsers` raises `Error(\`randomuser.me API returned ${response.status}\`)` for any other status. The error reaches the `ErrorBoundary` above the feature in `src/App.tsx`.
+- **The data source throws on a non-200.** `fetchUsers` raises `Error(\`randomuser.me API returned ${response.status}\`)`for any other status. The error reaches the`ErrorBoundary`above the feature in`src/App.tsx`.
 
 ## Testing the import
 
@@ -130,15 +131,15 @@ A feature-level workaround — a hand-written type, an adapter that reshapes the
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
+| Anti-pattern                                                                  | Why it is wrong                                                                                   |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `useSuspenseQuery({ queryFn: fetchUsers, queryKey: ["users"] })` in a feature | The key and the stale time belong to the cache. Duplicating them in two places is how they drift. |
-| `queryClient.setQueryData(GET_USERS_KEY, …)` in a feature | The cache owns the mutation. The feature calls `cache.remove`. |
-| `interface User { … }` in a feature | The type comes from the generated schema via `z.infer`. |
-| Editing `src/apis/__generated__/` | It is generated output. Change `openapi.yaml` and run `pnpm orval`. |
-| `vi.mock("@/apis/usersCache")` | It skips the parsing and the status handling. Stub `fetch` instead. |
-| A `UsersRepository` interface | There is one adapter. The seam does not exist yet (ADR-0001). |
-| Importing from `@/apis/usersCache/fetchUsers` directly | The barrel is the public surface of the API layer. |
+| `queryClient.setQueryData(GET_USERS_KEY, …)` in a feature                     | The cache owns the mutation. The feature calls `cache.remove`.                                    |
+| `interface User { … }` in a feature                                           | The type comes from the generated schema via `z.infer`.                                           |
+| Editing `src/apis/__generated__/`                                             | It is generated output. Change `openapi.yaml` and run `pnpm orval`.                               |
+| `vi.mock("@/apis/usersCache")`                                                | It skips the parsing and the status handling. Stub `fetch` instead.                               |
+| A `UsersRepository` interface                                                 | There is one adapter. The seam does not exist yet (ADR-0001).                                     |
+| Importing from `@/apis/usersCache/fetchUsers` directly                        | The barrel is the public surface of the API layer.                                                |
 
 ## Completion criteria
 
