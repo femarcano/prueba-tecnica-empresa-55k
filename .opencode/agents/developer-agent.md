@@ -28,7 +28,7 @@ Implement a new feature of this repository from a description of what it should 
   | A live example to confirm the convention                           | `src/features/UserList/`                                |
   | The domain vocabulary of this repository                           | `CONTEXT.md`                                            |
   | The data-source decision, when the feature reads data              | `docs/adr/0001-users-repository-as-prop.md`             |
-  | The API contract decision, when the feature calls the upstream API | `docs/adr/0002-repository-imports-type-from-feature.md` |
+  | The API contract decision, when the feature calls the upstream API | `docs/adr/0002-randomuser-contract-owned-by-openapi.md` |
 
 - **Read the skill for the role you are writing.** Each role has its own skill, with the rules and the anti-patterns of that role. Read the one that matches the file you are about to write — not all five.
 

@@ -32,7 +32,7 @@ The separation matters: an agent that writes the code and the tests together ten
   | The behaviour of the code under test   | the code, and the tests that already exist for it       |
   | The domain vocabulary                  | `CONTEXT.md`                                            |
   | The data-source decision               | `docs/adr/0001-users-repository-as-prop.md`             |
-  | The API contract decision              | `docs/adr/0002-repository-imports-type-from-feature.md` |
+  | The API contract decision              | `docs/adr/0002-randomuser-contract-owned-by-openapi.md` |
 
 - **Write the test at the cheapest layer that can observe the behaviour.** A unit test for a pure function, for the data source, for the Query cache, or for a hook. An integration test for the feature as a whole, when the behaviour is only visible on screen. See the layer table in the `feature-testing` skill.
 
