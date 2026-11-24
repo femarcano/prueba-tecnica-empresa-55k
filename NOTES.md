@@ -113,9 +113,11 @@ This repository carries two separate bodies of agent configuration, and the spli
 
 The imported lineage is style and process guidance, not a description of this codebase. Where the two conflict, the code on disk wins. It is deliberately **not** merged into `main` yet, so the upstream layout does not leak into the instructions every session loads.
 
-### `build-feature` has a known staleness
+### The `build-feature` sample
 
-`.opencode/skills/build-feature/samples/orders.md` still shows the `OrdersRepository` interface and a `src/repositories/` seam. ADR-0001 removed both. The `SKILL.md` body itself is current; only the worked sample is stale.
+`.opencode/skills/build-feature/samples/orders.md` is the worked example the scaffolder points at: it walks through every file in the role tree for an `Orders` feature and applies the deletion test to each one.
+
+It reads data through the API layer's cache, the way a real feature does. The repository seam stays deleted in it — the sample names `OrdersRepository` only to rule it out, the same way ADR-0001 removed it.
 
 ## Terminology that is not domain vocabulary
 
