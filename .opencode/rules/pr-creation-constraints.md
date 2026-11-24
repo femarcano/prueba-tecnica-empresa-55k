@@ -63,6 +63,19 @@ Run all four and quote their real results:
 
 **A check that fails because of the change must be fixed, not reported.** A pull request whose own lint fails is not ready. A check that fails for a reason outside the change is reported as it is, with the reason.
 
+## Formatting, before the checks
+
+`pnpm format:changed` formats only the files the change touches, and names every file it rewrote:
+
+```console
+$ pnpm format:changed
+Formatted 12 file(s) in this change.
+The formatter rewrote:
+  src/features/UserList/index.tsx
+```
+
+**Never run `pnpm format`.** It rewrites every file in the repository and buries the change under the formatter's opinion of files nobody opened. `format:changed` does the same job for the change's own files, and the rewrite stays visible in the diff.
+
 ## Conventions
 
 - **Branch name:** `<type>/<description>`, in alphanumerics, hyphens and slashes. No full-width characters.

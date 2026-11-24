@@ -60,6 +60,8 @@ The agent changes documentation. It does not change the code to match the docume
   | `pnpm test` | `vitest run` — the whole suite |
   | `pnpm format:check` | `oxfmt --check` — the formatting |
 
+  Run `pnpm format:changed` before the checks. It formats only the files the fix touches and names every file it rewrote. **Never run `pnpm format`** — it rewrites the whole repository and buries the fix under the formatter's opinion of files nobody opened.
+
 - **Report what changed and what a rename breaks.** Renaming a file or a term breaks every citation to it. Say what has to follow.
 
 ### What you may decide yourself

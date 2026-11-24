@@ -58,6 +58,8 @@ The implementation is somebody else's work. This agent does not write features, 
 
   **A check that fails because of the change must be fixed before the pull request is opened.** A pull request whose own lint fails is not ready. A check that fails for a reason outside the change is reported as it is, with the reason — that is a separate piece of work, not this one.
 
+  Run `pnpm format:changed` before the checks, if the change is not already formatted. It formats only the files the change touches and names every file it rewrote. **Never run `pnpm format`** — it rewrites the whole repository and buries the change under the formatter's opinion of files nobody opened.
+
 - **Write the body so a reviewer can decide without opening the diff.** The three sections, and what each is for:
 
   | Section | What goes in it |
