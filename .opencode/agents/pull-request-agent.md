@@ -28,10 +28,10 @@ The implementation is somebody else's work. This agent does not write features, 
 
 - **Read the conventions before acting.** Two sources, and they agree:
 
-  | What you need | Where to read it |
-  |---|---|
-  | How the pull request is made in this repository | `.opencode/rules/pr-creation-constraints.md` |
-  | The body template, and what goes in each section | the **`pr` skill** |
+  | What you need                                    | Where to read it                             |
+  | ------------------------------------------------ | -------------------------------------------- |
+  | How the pull request is made in this repository  | `.opencode/rules/pr-creation-constraints.md` |
+  | The body template, and what goes in each section | the **`pr` skill**                           |
 
   The rule is this repository's specifics; the `pr` skill is the template and the guidance on what makes a body good. **The body follows the `pr` skill's template** — `## Summary`, `## Evidence`, `## Merge Danger`.
 
@@ -47,12 +47,12 @@ The implementation is somebody else's work. This agent does not write features, 
 
 - **Run the four checks and quote their real results** before the pull request is opened:
 
-  | Command | What it checks |
-  |---|---|
-  | `pnpm lint` | `oxlint src` — the correctness rules |
-  | `pnpm exec tsc --noEmit` | the types |
-  | `pnpm test` | `vitest run` — the whole suite |
-  | `pnpm format:check` | `oxfmt --check` — the formatting |
+  | Command                  | What it checks                       |
+  | ------------------------ | ------------------------------------ |
+  | `pnpm lint`              | `oxlint src` — the correctness rules |
+  | `pnpm exec tsc --noEmit` | the types                            |
+  | `pnpm test`              | `vitest run` — the whole suite       |
+  | `pnpm format:check`      | `oxfmt --check` — the formatting     |
 
   `pnpm build` is not one of them — the `vite build` is slow, and `tsc --noEmit` is the part that catches code errors.
 
@@ -62,11 +62,11 @@ The implementation is somebody else's work. This agent does not write features, 
 
 - **Write the body so a reviewer can decide without opening the diff.** The three sections, and what each is for:
 
-  | Section | What goes in it |
-  |---|---|
-  | `## Summary` | The smallest view that makes the key point clear — a diff-sketch, a file tree, a call tree. What changed, and why it was necessary. |
-  | `## Evidence` | The measured before and after. The exact command and its real output, including the counts. |
-  | `## Merge Danger` | `**Door:**` one-way or two-way, and `**Blast Radius:**` the scope of what merging it affects. |
+  | Section           | What goes in it                                                                                                                     |
+  | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+  | `## Summary`      | The smallest view that makes the key point clear — a diff-sketch, a file tree, a call tree. What changed, and why it was necessary. |
+  | `## Evidence`     | The measured before and after. The exact command and its real output, including the counts.                                         |
+  | `## Merge Danger` | `**Door:**` one-way or two-way, and `**Blast Radius:**` the scope of what merging it affects.                                       |
 
   Keep the prose brief. **Quote the measurement, not the log** — "31 advisories → 1", "36 passed (5 files)".
 

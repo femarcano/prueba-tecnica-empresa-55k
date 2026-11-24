@@ -13,11 +13,11 @@ This skill is the check that stands between "the branch is merged" and "delete i
 
 Every worktree gets three answers before anything is removed.
 
-| Question | How it is answered |
-|---|---|
-| **Is the branch merged?** | Two checks, because a squash merge breaks the first one — see below. |
-| **How old is it?** | Days since the branch was last worked on. |
-| **Does it hold unsaved work?** | `git status --porcelain` in the worktree. |
+| Question                       | How it is answered                                                   |
+| ------------------------------ | -------------------------------------------------------------------- |
+| **Is the branch merged?**      | Two checks, because a squash merge breaks the first one — see below. |
+| **How old is it?**             | Days since the branch was last worked on.                            |
+| **Does it hold unsaved work?** | `git status --porcelain` in the worktree.                            |
 
 ## Is the branch merged
 
@@ -39,12 +39,12 @@ Empty output means the branch contributes nothing that `main` does not already h
 
 **Read them together:**
 
-| Ancestor | Content | What it means |
-|---|---|---|
-| merged | differs | **Merged**, and the branch has changes `main` does not have. The extra changes are something else — read them before touching it. |
-| merged | identical | **Merged cleanly.** Safe to remove. |
-| not merged | identical | **Squash-merged.** Safe to remove — this is the case the ancestor check alone gets wrong. |
-| not merged | differs | **Not merged.** The branch holds work that is nowhere else. Do not remove it. Report it. |
+| Ancestor   | Content   | What it means                                                                                                                     |
+| ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| merged     | differs   | **Merged**, and the branch has changes `main` does not have. The extra changes are something else — read them before touching it. |
+| merged     | identical | **Merged cleanly.** Safe to remove.                                                                                               |
+| not merged | identical | **Squash-merged.** Safe to remove — this is the case the ancestor check alone gets wrong.                                         |
+| not merged | differs   | **Not merged.** The branch holds work that is nowhere else. Do not remove it. Report it.                                          |
 
 ## How old is it
 
@@ -56,7 +56,7 @@ $ git log -1 --format="%at %ct" <branch> \
     | awk -v now="$(date +%s)" '{printf "%d days\n", (now-$1)/86400}'
 ```
 
-**Why the oldest of the two.** The author date is when the work was written; the committer date is when the commit was written. They are the same for an ordinary commit. They differ when the commit was rebased or amended — and then the committer date is the moment of the rewrite, which says nothing about how old the *work* is. Taking the oldest of the two reports the age of the work, and it cannot be gamed by rewriting the history.
+**Why the oldest of the two.** The author date is when the work was written; the committer date is when the commit was written. They are the same for an ordinary commit. They differ when the commit was rebased or amended — and then the committer date is the moment of the rewrite, which says nothing about how old the _work_ is. Taking the oldest of the two reports the age of the work, and it cannot be gamed by rewriting the history.
 
 For a branch with an upstream, the remote copy can be newer than the local one. Take the newer of the two — a branch that was worked on and pushed is not stale:
 
@@ -72,12 +72,12 @@ A branch with no upstream has no remote copy, and the local dates are all there 
 
 The checks are read **in this order**. A branch that is not merged is reported and left alone whatever its age — there is no point asking about removing something that holds work that exists nowhere else.
 
-| # | State | Stale? | What to do |
-|---|---|---|---|
-| 1 | Not merged, any age | — | **Do not remove it.** Report it. The branch holds work that exists nowhere else. |
-| 2 | Merged, but with changes `main` does not have | — | **Read the extra changes first.** The branch was merged and then something else was committed on it. |
-| 3 | Merged, 14 days or more | yes | **Ask the PL before removing it.** Report the age and the merged state, and let them decide. |
-| 4 | Merged, under 14 days | no | **Remove it.** No need to ask. |
+| #   | State                                         | Stale? | What to do                                                                                           |
+| --- | --------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
+| 1   | Not merged, any age                           | —      | **Do not remove it.** Report it. The branch holds work that exists nowhere else.                     |
+| 2   | Merged, but with changes `main` does not have | —      | **Read the extra changes first.** The branch was merged and then something else was committed on it. |
+| 3   | Merged, 14 days or more                       | yes    | **Ask the PL before removing it.** Report the age and the merged state, and let them decide.         |
+| 4   | Merged, under 14 days                         | no     | **Remove it.** No need to ask.                                                                       |
 
 **Ask, then wait.** The question is not a formality — the answer may be "keep it, I still want to look at it" or "remove it, I have it on another machine". Report what you found, ask, and act on the answer.
 
@@ -169,11 +169,11 @@ branch refs/heads/feat/header-accessibility
 
 `git worktree list` marks the ones that need attention:
 
-| The annotation | What it means | What to do |
-|---|---|---|
-| `prunable` | The directory is gone; the registration is stale | `git worktree prune` |
-| `locked` | Kept on purpose, with a reason | Leave it; unlock it when the reason is over |
-| `detached` | The worktree is on a commit, not on a branch | Report it — a worktree should be on its own branch |
+| The annotation | What it means                                    | What to do                                         |
+| -------------- | ------------------------------------------------ | -------------------------------------------------- |
+| `prunable`     | The directory is gone; the registration is stale | `git worktree prune`                               |
+| `locked`       | Kept on purpose, with a reason                   | Leave it; unlock it when the reason is over        |
+| `detached`     | The worktree is on a commit, not on a branch     | Report it — a worktree should be on its own branch |
 
 ```console
 $ git worktree list

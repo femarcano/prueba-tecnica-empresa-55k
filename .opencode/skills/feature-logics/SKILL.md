@@ -18,12 +18,12 @@ src/features/<Name>/logics/
 
 Each folder is named for what it produces:
 
-| Kind | Folder name | What it does |
-|---|---|---|
-| **Converter** | `convertToPresentationProps/` | Turns a domain value into the shape the presentation renders |
-| **Generator** | `createUserDataTableHeader/`, `generate<Name>Params/` | Builds a value that is handed to something else — a column set, a request body, API params |
-| **Schema** | `schema/` | The Zod schemas, and the types inferred from them |
-| **Shared value** | `features/` | A value that more than one role needs, and whose **type** the roles share |
+| Kind             | Folder name                                           | What it does                                                                               |
+| ---------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Converter**    | `convertToPresentationProps/`                         | Turns a domain value into the shape the presentation renders                               |
+| **Generator**    | `createUserDataTableHeader/`, `generate<Name>Params/` | Builds a value that is handed to something else — a column set, a request body, API params |
+| **Schema**       | `schema/`                                             | The Zod schemas, and the types inferred from them                                          |
+| **Shared value** | `features/`                                           | A value that more than one role needs, and whose **type** the roles share                  |
 
 `src/features/UserList/logics/` is the canonical example. Read it before writing one.
 
@@ -84,7 +84,12 @@ type IUserDataTableColumns = (args: Args) => ColumnDef<typeof userListTableFeatu
 
 export const createUserDataTableColumns: IUserDataTableColumns = ({ onDelete }) => {
   return [
-    { accessorKey: "picture.thumbnail", cell: ({ row }) => { /* ... */ } },
+    {
+      accessorKey: "picture.thumbnail",
+      cell: ({ row }) => {
+        /* ... */
+      },
+    },
     // ...
   ];
 };
@@ -104,7 +109,7 @@ Zod is the single source of truth for domain types. Types are **inferred** with 
 ```ts
 import { z } from "zod";
 
-export const nameSchema = z.object({ /* ... */ });
+export const nameSchema = z.object({/* ... */});
 export type Name = z.infer<typeof nameSchema>;
 
 export const userSchema = z.object({
@@ -164,16 +169,16 @@ When you extract a shared value for this reason, say so in the module's comment 
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is wrong |
-|---|---|
-| `interface User {}` next to a schema | Zod is the source of truth. `z.infer` gives the type. |
-| A `src/types/<feature>.ts` file | Types belong to the feature, under `logics/schema/`. |
-| `useQuery` inside a `logics/` file | A logic that needs data is not pure. It belongs in a hook. |
-| A converter with no branches, over one field | Extraction adds a file, a type and an indirection. It pays for itself only when there is logic worth testing. |
-| A converter-specific type, declared by hand | Derive it from the presentation's props so the two cannot drift. |
-| A generator that reads a React context | It needs the value as an argument. |
-| Two files each building the same features object | They would be different types. Share one — see `logics/features/`. |
-| A schema that re-declares the upstream payload | The payload shape is owned by `openapi.yaml` and materialized by orval (ADR-0002). |
+| Anti-pattern                                     | Why it is wrong                                                                                               |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `interface User {}` next to a schema             | Zod is the source of truth. `z.infer` gives the type.                                                         |
+| A `src/types/<feature>.ts` file                  | Types belong to the feature, under `logics/schema/`.                                                          |
+| `useQuery` inside a `logics/` file               | A logic that needs data is not pure. It belongs in a hook.                                                    |
+| A converter with no branches, over one field     | Extraction adds a file, a type and an indirection. It pays for itself only when there is logic worth testing. |
+| A converter-specific type, declared by hand      | Derive it from the presentation's props so the two cannot drift.                                              |
+| A generator that reads a React context           | It needs the value as an argument.                                                                            |
+| Two files each building the same features object | They would be different types. Share one — see `logics/features/`.                                            |
+| A schema that re-declares the upstream payload   | The payload shape is owned by `openapi.yaml` and materialized by orval (ADR-0002).                            |
 
 ## Completion criteria
 

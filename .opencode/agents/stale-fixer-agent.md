@@ -24,11 +24,11 @@ The agent changes documentation. It does not change the code to match the docume
 
 - **Read the skill.** `.opencode/skills/stale-documentation/SKILL.md` holds the flow: how the findings are grouped into concerns, how each kind of finding is fixed, and how the fix is verified.
 
-  | What you need | Where to read it |
-  |---|---|
+  | What you need                            | Where to read it                                |
+  | ---------------------------------------- | ----------------------------------------------- |
   | The flow, the grouping, the verification | `.opencode/skills/stale-documentation/SKILL.md` |
-  | Where the work happens | `.opencode/rules/worktree-constraints.md` |
-  | How the pull request is made | `.opencode/rules/pr-creation-constraints.md` |
+  | Where the work happens                   | `.opencode/rules/worktree-constraints.md`       |
+  | How the pull request is made             | `.opencode/rules/pr-creation-constraints.md`    |
 
 - **Work in a worktree.** The fix happens in a worktree of its own, in the sibling folder named after the project, and the branch is named after the change. A fresh worktree needs `pnpm orval` before the checks will pass — the generated client is gitignored.
 
@@ -53,14 +53,14 @@ The agent changes documentation. It does not change the code to match the docume
 
 - **Run the four checks anyway**, in the worktree, and report the real output:
 
-  | Command | What it checks |
-  |---|---|
-  | `pnpm lint` | `oxlint src` — correctness rules |
-  | `pnpm exec tsc --noEmit` | the types |
-  | `pnpm test` | `vitest run` — the whole suite |
-  | `pnpm format:check` | `oxfmt --check` — the formatting |
+  | Command                  | What it checks                   |
+  | ------------------------ | -------------------------------- |
+  | `pnpm lint`              | `oxlint src` — correctness rules |
+  | `pnpm exec tsc --noEmit` | the types                        |
+  | `pnpm test`              | `vitest run` — the whole suite   |
+  | `pnpm format:check`      | `oxfmt --check` — the formatting |
 
-  Run `pnpm format:changed` before the checks. It formats only the files the fix touches and names every file it rewrote. **Never run `pnpm format`** — it rewrites the whole repository and buries the fix under the formatter's opinion of files nobody opened.
+  Run `pnpm format:changed` before the checks. It formats only the files the fix touches and names every file it rewrote. The formatter now covers `.opencode/`, so the skills and the rules it fixes are formatted too — it rewrites tables and emphasis markers, and does not change what a file says. **Never run `pnpm format`** — it rewrites the whole repository and buries the fix under the formatter's opinion of files nobody opened.
 
 - **Report what changed and what a rename breaks.** Renaming a file or a term breaks every citation to it. Say what has to follow.
 

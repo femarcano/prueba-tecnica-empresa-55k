@@ -81,10 +81,7 @@ export const useGetOrders = () => {
 
   const { data: payload = null, isLoading, error } = useQuery(cache.query());
 
-  const orders = useMemo(
-    () => (payload ? orderSchema.array().parse(payload) : null),
-    [payload],
-  );
+  const orders = useMemo(() => (payload ? orderSchema.array().parse(payload) : null), [payload]);
 
   return { orders, isLoading, error };
 };
